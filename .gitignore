@@ -1,0 +1,30 @@
+# Ignore everything in the root
+/*
+/vitems/*
+/.pytest_cache/
+/__pycache__/
+/app/__pycache__/
+/app/tests/__pycache__/
+/app/main/__pycache__/
+/app/.env
+.coverage
+# Un-ignore these files - it's bit of a clonky way to do it but it's more secure
+!app/
+!items.py
+!manage.py
+!requirements.txt
+!migrations/
+!app/__init__.py
+!app/config.py
+!app/extensions.py
+!README.md
+!app/models.py
+!app/assertions.py
+!app/utils.py
+!app/main/__init__.py
+!app/main/views.py
+!app/tests/fixtures.py
+!app/tests/test_api.py
+!app/tests/__init__.py
+!app/.env_example
+!.gitignore
