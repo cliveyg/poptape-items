@@ -14,6 +14,9 @@ class Config(object):
     MONGO_URI = os.getenv('MONGO_URI')
     MONGO_DB_NAME = os.getenv('MONGO_DB_NAME')
     PAGE_LIMIT = os.getenv('PAGE_LIMIT')
+    FOTO_LIMIT = os.getenv('FOTO_LIMIT')
+    AWS_S3_URL = os.getenv('AWS_S3_URL')
+    FOTOS_URL = os.getenv('FOTOS_URL')
 
 class TestConfig(Config):
     LOG_LEVEL = "DEBUG"

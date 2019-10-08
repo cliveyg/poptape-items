@@ -3,8 +3,9 @@
   "title": "Item schema",
   "type": "object",
   "properties": {
-        "description": {"type": "string", "maxLength": 5000}
+        "description": {"type": "string", "maxLength": 5000},
+        "name": {"type": "string", "minLength": 10, "maxLength": 200}
   },
   "additionalProperties": true,
-  "required": ["description"]
+  "required": ["description", "name"]
 }

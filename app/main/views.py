@@ -3,9 +3,9 @@ from app import mongo, limiter, flask_uuid
 from flask import jsonify, request, abort
 from flask import current_app as app
 from app.main import bp
-from app.asyncmongo import bulk_fetch
 from app.assertions import assert_valid_schema
 from app.decorators import require_access_level
+from app.services import get_s3_urls
 from jsonschema.exceptions import ValidationError as JsonValidationError
 from pymongo import ASCENDING, DESCENDING
 import uuid
@@ -46,9 +46,28 @@ def create_item(public_id, request):
     data['created'] = datetime.datetime.utcnow()
     data['modified'] = datetime.datetime.utcnow()
     result = mongo.db.items.insert_one({"_id" : item_id, "details": data})
-    app.logger.info(result)
+    #app.logger.info(result)
 
-    return jsonify({ 'item_id': item_id }), 201
+    token = request.headers.get('x-access-token')
+
+    # need to generate a list of foto ids 
+    # that we can pass to aws microservice
+    foto_ids = [] 
+    for i in range(int(app.config['FOTO_LIMIT'])):
+        foto_ids.append(str(uuid.uuid4()))
+
+    r = get_s3_urls(foto_ids, token)
+    s3_urls = []
+    collection_name = 'z'+public_id.replace('-','')
+    bucket_url = "https://"+collection_name.lower()+".s3.amazonaws.com/"
+
+    if r.status_code == 201:
+        aws_data = r.json()
+        s3_urls = aws_data.get('aws_urls')
+
+    return jsonify({ 'item_id': item_id,
+                     'bucket_url': bucket_url,
+                     's3_urls': s3_urls }), 201
 
 #-----------------------------------------------------------------------------#
 
@@ -75,7 +94,7 @@ def fetch_items():
     output = []
 
     for item in results:
-        item['id'] = str(item['_id'])
+        item['item_id'] = str(item['_id'])
         del item['_id']
         output.append(item)
 
@@ -116,8 +135,10 @@ def get_items_by_user(public_id, request):
         sort = request.args['sort']
 
     starting_id = None
+    results_count = 0
     try:
         starting_id = mongo.db.items.find({ 'details.public_id': public_id }).sort('_id', ASCENDING)
+        #starting_id = mongo.db.items.find({ 'details.public_id': public_id }).sort('created', ASCENDING)
         results_count = starting_id.count()
     except:
         jsonify({ 'message': 'There\'s a problem with your arguments or mongo or both or something else ;)'}), 400
@@ -137,14 +158,19 @@ def get_items_by_user(public_id, request):
     try:
         items = mongo.db.items.find({'$and': [{'_id': { '$gte': last_id}},
                                               {'details.public_id': public_id}]}).sort('_id', ASCENDING).limit(limit)
+                                              #{'details.public_id': public_id}]}).sort('created', ASCENDING).limit(limit)
     except:
         jsonify({ 'message': 'There\'s a problem with your arguments or planets are misaligned. try sacrificing a goat or something...'}), 400
 
     output = []
 
     for item in items:
-        item['id'] = str(item['_id'])
+        item['item_id'] = str(item['_id'])
         del item['_id']
+        details = item['details']
+        for k in details:
+            item[k] = details[k]
+        del item['details']
         output.append(item)
 
     url_offset_next = offset+limit
