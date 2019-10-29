@@ -10,6 +10,7 @@ from jsonschema.exceptions import ValidationError as JsonValidationError
 from pymongo import ASCENDING, DESCENDING
 import uuid
 import datetime
+import re
 
 #-----------------------------------------------------------------------------#
 
@@ -96,6 +97,9 @@ def fetch_items():
     for item in results:
         item['item_id'] = str(item['_id'])
         del item['_id']
+        details = item['details']
+        del item['details'] 
+        item.update(details)
         output.append(item)
 
     return jsonify({ 'items': output }), 200
@@ -103,8 +107,9 @@ def fetch_items():
 #-----------------------------------------------------------------------------#
 
 @bp.route('/items/<uuid:item_id>', methods=['GET'])
-@require_access_level(10, request)
-def get_item(public_id, request, item_id):
+#@require_access_level(10, request)
+#def get_item(public_id, request, item_id):
+def get_item(item_id):
 
     # every user has their own collection
     item_id = str(item_id)
@@ -141,7 +146,7 @@ def get_items_by_user(public_id, request):
         #starting_id = mongo.db.items.find({ 'details.public_id': public_id }).sort('created', ASCENDING)
         results_count = starting_id.count()
     except:
-        jsonify({ 'message': 'There\'s a problem with your arguments or mongo or both or something else ;)'}), 400
+        return jsonify({ 'message': 'There\'s a problem with your arguments or mongo or both or something else ;)'}), 400
 
     if results_count == 0:
         return jsonify({ 'message': 'Nowt here chap'}), 404
@@ -160,7 +165,7 @@ def get_items_by_user(public_id, request):
                                               {'details.public_id': public_id}]}).sort('_id', ASCENDING).limit(limit)
                                               #{'details.public_id': public_id}]}).sort('created', ASCENDING).limit(limit)
     except:
-        jsonify({ 'message': 'There\'s a problem with your arguments or planets are misaligned. try sacrificing a goat or something...'}), 400
+        return jsonify({ 'message': 'There\'s a problem with your arguments or planets are misaligned. try sacrificing a goat or something...'}), 400
 
     output = []
 
@@ -168,9 +173,8 @@ def get_items_by_user(public_id, request):
         item['item_id'] = str(item['_id'])
         del item['_id']
         details = item['details']
-        for k in details:
-            item[k] = details[k]
         del item['details']
+        item.update(details)
         output.append(item)
 
     url_offset_next = offset+limit
@@ -194,6 +198,41 @@ def get_items_by_user(public_id, request):
     return jsonify(return_data), 200
 
 #-----------------------------------------------------------------------------#
+# brings back a random selection of 20 items by category
+@bp.route('/items/cat/<category>', methods=['GET'])
+def get_items_by_category(category):
+
+    # basic data sanitation checks for category in format like 'cars:2000'
+    if not re.search("^[a-z]{1,20}:[0-9]{2,5}$",category):
+        return jsonify({ 'message': 'Invalid category'}), 400 
+    items = []
+
+    try:
+        results = mongo.db.items.aggregate([{ "$match": { "details.category": category } },
+                                          { "$sample": { "size": 20 } }])
+    except Exception as e:
+        app.logger.info(e)
+        return jsonify({ 'message': 'There\'s a problem with your arguments or mongo or both or something else ;)'}), 400
+
+    items = list(results)
+
+    if len(items) == 0:
+        return jsonify({ 'message': 'Nowt in that category lass'}), 404
+
+    output = []
+    for item in items:
+        item['item_id'] = str(item['_id'])
+        del item['_id']
+        details = item['details']
+        del item['details']
+        item.update(details)
+        output.append(item)
+
+    return_data = { 'items': output }
+
+    return jsonify(return_data), 200
+
+# -----------------------------------------------------------------------------
 
 @bp.route('/items/<uuid:item_id>', methods=['PUT'])
 @require_access_level(10, request)
