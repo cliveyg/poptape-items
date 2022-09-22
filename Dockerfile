@@ -1,5 +1,5 @@
 #FROM nginx:alpine
-FROM python:3.7-alpine
+FROM python:3.10-alpine
 
 # add bash etc as alpine version doesn't have these
 RUN apk add --no-cache bash git gawk sed grep bc coreutils 
