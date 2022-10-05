@@ -1,16 +1,20 @@
-version: '3'
+version: '3.4'
+
+volumes:
+  poptape_items:
+    name: poptape_items
+
 services:
   api:
-    env_file: app/.env
     build:
       context: .
       dockerfile: Dockerfile
     image: poptape/items/api:v0.1
     ports:
-      - 1242:8003
+      - "1242:8003"
     restart: always
     depends_on:
-      - mongo_db
+      - mongodb
     volumes:
       - /var/log:${LOGFILE}
     logging:
@@ -19,21 +23,22 @@ services:
         max-size: "10Mb"
         max-file: "5"
     networks:
-      - net_poptape 
-  mongo_db:
-    image: mongo:3.6
-    restart: always
-    env_file: app/.env
+      - net_poptape
+
+  mongodb:
+    image: mongo
     ports:
-      - 1243:27017
-    volumes: 
+      - "1243:27017"
+    restart: always
+    volumes:
       - poptape_items:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     networks:
-      - net_poptape    
+      - net_poptape
 
 networks:
   net_poptape:
     external: true
 
-volumes:
-  poptape_items:
