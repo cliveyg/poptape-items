@@ -7,7 +7,6 @@ coverage
 Flask
 Flask-Limiter
 Flask-PyMongo
-Flask-Script
 Flask-UUID
 gunicorn
 idna
