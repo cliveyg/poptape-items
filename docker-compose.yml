@@ -1,9 +1,3 @@
-version: '3.4'
-
-volumes:
-  poptape_items:
-    name: poptape_items
-
 services:
   api:
     build:
@@ -16,14 +10,14 @@ services:
     depends_on:
       - mongodb
     volumes:
-      - /var/log:${LOGFILE}
+      - ${LOCAL_LOG_LOC}:/items/log
     logging:
       driver: "json-file"
       options:
         max-size: "10Mb"
         max-file: "5"
     networks:
-      - net_poptape
+      - poptape
 
   mongodb:
     image: mongo
@@ -36,9 +30,12 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     networks:
-      - net_poptape
+      - poptape
 
 networks:
-  net_poptape:
+  poptape:
     external: true
+volumes:
+  poptape_items:
+    name: poptape_items
 
