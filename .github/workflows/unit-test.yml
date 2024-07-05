@@ -68,8 +68,8 @@ jobs:
 
       - name: Test with pytest
         run: |
-          echo "PWD IS $(pwd)"
-          touch poptape_items.log
+          mkdir -p log
+          touch log/poptape_items.log
           coverage run -m --omit="*/test*" pytest -v --junitxml=junit.xml --html=report.html
           coverage xml          
           echo "$(coverage report -m )"
