@@ -17,7 +17,7 @@ jobs:
         python-version: [3.9] # Using a list so it's extensible for future use
     services:
       # label used to access the service container
-      mongo:
+      mongodb:
         # dockerhub image
         image: mongo
         # provide the login and db deets for mongo
