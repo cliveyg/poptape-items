@@ -24,13 +24,13 @@ jobs:
         env:
           MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
           MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-          # MONGO_INITDB_DATABASE: poptape_items
+        # MONGO_INITDB_DATABASE: poptape_items
         ports:
           # maps tcp port 27017 on service container to the host
           - 1243:27017
         # set health checks to wait until mongo has started
         options: >-
-          --health-cmd mongo
+          --health-cmd "echo 'db.runCommand("ping").ok' | mongosh --quiet"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
