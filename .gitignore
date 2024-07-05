@@ -28,6 +28,7 @@
 !app/assertions.py
 !app/utils.py
 !app/tests/__init__.py
+!app/tests/test_api.py
 !app/main/__init__.py
 !app/main/views.py
 !app/tests/fixtures.py
