@@ -29,7 +29,7 @@ jobs:
           - 1243:27017
         # set health checks to wait until mongo has started
       healthcheck:
-        test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+        test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/poptape_items --quiet
     steps:
 
       - name: Install mongosh
