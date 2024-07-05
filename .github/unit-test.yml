@@ -1,0 +1,74 @@
+name: Unit tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 11 * * 1' # run "At 11:00 on Monday"
+
+jobs:
+  # Run code tests before building the image, to ensure it is good to go
+  unit-tests:
+    name: Run code tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9] # Using a list so it's extensible for future use
+    services:
+      # label used to access the service container
+      postgres:
+        # dockerhub image
+        image: mongo
+        # provide the login and db deets for mongo
+        env:
+          MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+          MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+        ports:
+          # maps tcp port 27017 on service container to the host
+          - 1243:27017
+        # set health checks to wait until mongo has started
+      healthcheck:
+        test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+    steps:
+
+      - name: Install mongosh
+        run: |
+          wget -qO- https://www.mongodb.org/static/pgp/server-7.0.asc | sudo tee /etc/apt/trusted.gpg.d/server-7.0.asc
+
+      - uses: actions/checkout@v4
+      - name: Setting up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      # have to create an .env file to be able to run unit tests
+      - name: Create .env file from github secrets
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
+
+      # - name: Create DB tables
+      #  run: |
+      #    pwd
+      #    psql -h localhost -U poptape_auth_test password=${{ secrets.TESTDB_PASSWORD }} -f db_schema/poptape_auth_db_schema.sql
+      #    psql -h localhost -U poptape_auth_test password=${{ secrets.TESTDB_PASSWORD }} -c '\dt'
+
+      - name: Test with pytest
+        run: |
+          touch poptape_items.log
+          coverage run -m --omit="*/test*" pytest -v --junitxml=junit.xml --html=report.html
+          coverage xml          
+          echo "$(coverage report -m )"
+          covRes="$(coverage report -m --fail-under=94)"
+          echo "$covRes"
+
+      # - name: Create coverage badges
+      #  uses: gaelgirodon/ci-badges-action@v1
+      #  with:
+      #    gist-id: 01d4e7e6c85224fa06e86e36359f93af
+      #    token: ${{ secrets.GIST_TOKEN }}
