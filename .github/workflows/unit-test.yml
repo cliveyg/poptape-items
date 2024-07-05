@@ -24,7 +24,7 @@ jobs:
         env:
           MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
           MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-          MONGO_INITDB_DATABASE: poptape_items
+          # MONGO_INITDB_DATABASE: poptape_items
         ports:
           # maps tcp port 27017 on service container to the host
           - 1243:27017
