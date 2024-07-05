@@ -13,6 +13,8 @@
 # Un-ignore these files - it's bit of a clonky way to do it but it's more secure
 !Dockerfile
 !docker-compose.yml
+!.github
+!.github/unit-test.yml
 !app/
 !items.py
 !manage.py
