@@ -11,8 +11,12 @@ RUN apk add --no-cache redis
 # this needs to match the directory/package name of the python app
 COPY . /items
 WORKDIR /items
+
+# remove unwanted files and folders
+RUN rm -rf vitems
+RUN rm -rf app/tests
 RUN mkdir -p /items/log
-#RUN touch /items/log/poptape_itemserver.log
+#RUN touch /items/log/poptape_items.log
 
 
 # Install any needed packages specified in requirements.txt
