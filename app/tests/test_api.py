@@ -39,7 +39,7 @@ class MyTest(FlaskTestCase):
 
         self.assertEqual(response.status_code, 200)
 
-    def reject_non_json(self):
+    def test_reject_non_json(self):
         headers = { 'Content-type': 'text/html' }
         response = self.client.get('/items/status', headers=headers)
 
