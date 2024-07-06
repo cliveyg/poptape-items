@@ -44,3 +44,9 @@ class MyTest(FlaskTestCase):
         response = self.client.get('/items/status', headers=headers)
 
         self.assertEqual(response.status_code, 400)
+
+    def test_404(self):
+        headers = { 'Content-type': 'application/json' }
+        response = self.client.get('/items/non-existent-url', headers=headers)
+
+        self.assertEqual(response.status_code, 404)
