@@ -32,7 +32,5 @@
 !app/main/__init__.py
 !app/main/views.py
 !app/tests/fixtures.py
-!app/tests/test_api.py
-!app/tests/__init__.py
 !app/.env_example
 !.gitignore

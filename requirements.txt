@@ -17,6 +17,7 @@ Jinja2
 jsonschema
 limits
 MarkupSafe
+mock
 more-itertools
 motor
 packaging
