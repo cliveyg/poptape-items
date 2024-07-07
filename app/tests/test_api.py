@@ -5,6 +5,7 @@ from mock import patch
 from functools import wraps
 from .fixtures import getPublicID, exceptionFactory
 from flask import jsonify
+import pymongo
 # import uuid
 
 # have to mock the require_access_level decorator here before it
@@ -45,21 +46,21 @@ class MyTest(FlaskTestCase):
         return app
 
     def setUp(self):
-        if mongo.getName() == "items":
-            raise exceptionFactory(SystemError, "items db already exists")
+        try:
+            mongo.db.validate_collection("items")
+        except pymongo.errors.OperationFailure:
+            raise exceptionFactory(SystemError, "items collection already exists")
 
     def tearDown(self):
-        if mongo.getName() == "items":
-            try:
-                mongo.dropDatabase()
-            except Exception as e:
-                raise exceptionFactory(e, "unable to drop mongo items db")
-        else:
-            raise exceptionFactory(SystemError, "current db is not items")
+        try:
+            mongo.db.validate_collection("items")
+        except pymongo.errors.OperationFailure:
+            # drop collection if exists
+            mongo.db.items.drop()
 
-    ###############################################################################
+    # --------------------------------------------------------------------------- #
     #                                tests                                        #
-    ###############################################################################
+    # --------------------------------------------------------------------------- #
 
     def test_status_ok(self):
         headers = {'Content-type': 'application/json'}
