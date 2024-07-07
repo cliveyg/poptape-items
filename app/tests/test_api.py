@@ -45,14 +45,10 @@ class MyTest(FlaskTestCase):
         return app
 
     def setUp(self):
-        list_of_collections = mongo.list_collection_names()
-        if "items" in list_of_collections:
-            raise exceptionFactory(SystemError, "items collection already exists")
+        mongo.db.items.drop()
 
     def tearDown(self):
-        list_of_collections = mongo.list_collection_names()
-        if "items" in list_of_collections:
-            mongo.db.items.drop()
+        mongo.db.items.drop()
 
     # --------------------------------------------------------------------------- #
     #                                tests                                        #
