@@ -29,7 +29,7 @@ def mock_dec(access_level, request):
 
 patch('app.decorators.require_access_level', mock_dec).start()
 
-from app import create_app
+from app import create_app, mongo
 from app.config import TestConfig
 from flask_testing import TestCase as FlaskTestCase
 
@@ -45,16 +45,17 @@ class MyTest(FlaskTestCase):
         return app
 
     def setUp(self):
-        if self.app.mongo.db.getName() == "items":
+        if mongo.db.getName() == "items":
             raise exceptionFactory(SystemError, "items db already exists")
 
     def tearDown(self):
-        if self.app.mongo.db.getName() == "items":
+        if mongo.db.getName() == "items":
             try:
-                self.app.mongo.db.dropDatabase()
+                mongo.db.dropDatabase()
             except Exception as e:
                 raise exceptionFactory(e, "unable to drop mongo items db")
-
+        else:
+            raise exceptionFactory(SystemError, "current db is not items")
     ###############################################################################
     #                                tests                                        #
     ###############################################################################
