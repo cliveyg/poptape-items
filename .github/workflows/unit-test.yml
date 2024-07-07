@@ -27,7 +27,7 @@ jobs:
           MONGO_INITDB_DATABASE: ${MONGO_TESTDB_NAME}
         ports:
           # maps tcp port 27017 on service container to the host
-          - 1243:27017
+          - 27017:27017
         # set health checks to wait until mongo has started
         options: >-
           --health-cmd "echo 'db.runCommand("ping").ok' | mongosh --quiet"
