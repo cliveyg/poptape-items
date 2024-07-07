@@ -45,17 +45,18 @@ class MyTest(FlaskTestCase):
         return app
 
     def setUp(self):
-        if mongo.db.getName() == "items":
+        if mongo.getName() == "items":
             raise exceptionFactory(SystemError, "items db already exists")
 
     def tearDown(self):
-        if mongo.db.getName() == "items":
+        if mongo.getName() == "items":
             try:
-                mongo.db.dropDatabase()
+                mongo.dropDatabase()
             except Exception as e:
                 raise exceptionFactory(e, "unable to drop mongo items db")
         else:
             raise exceptionFactory(SystemError, "current db is not items")
+
     ###############################################################################
     #                                tests                                        #
     ###############################################################################
