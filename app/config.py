@@ -12,7 +12,6 @@ class Config(object):
     LOG_LEVEL = os.getenv('LOG_LEVEL')
     FERNET_KEY = os.getenv('FERNET_KEY')
     MONGO_URI = os.getenv('MONGO_URI')
-    MONGO_DB_NAME = os.getenv('MONGO_DB_NAME')
     PAGE_LIMIT = os.getenv('PAGE_LIMIT')
     FOTO_LIMIT = os.getenv('FOTO_LIMIT')
     AWS_S3_URL = os.getenv('AWS_S3_URL')
@@ -20,5 +19,4 @@ class Config(object):
 
 class TestConfig(Config):
     LOG_LEVEL = "DEBUG"
-    MONGO_TEST_URI = os.getenv('MONGO_TEST_URI')
-    MONGO_TESTDB_NAME = os.getenv('MONGO_TESTDB_NAME')
+    MONGO_URI = os.getenv('MONGO_TEST_URI')

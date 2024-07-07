@@ -22,9 +22,9 @@ jobs:
         image: mongo
         # provide the login and db deets for mongo
         env:
-          MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-          MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-        # MONGO_INITDB_DATABASE: poptape_items
+          MONGO_INITDB_ROOT_USERNAME: ${MONGO_TESTDB_ROOT_USERNAME}
+          MONGO_INITDB_ROOT_PASSWORD: ${MONGO_TESTDB_ROOT_PASSWORD}
+          MONGO_INITDB_DATABASE: ${MONGO_TESTDB_NAME}
         ports:
           # maps tcp port 27017 on service container to the host
           - 1243:27017
