@@ -20,3 +20,4 @@ class Config(object):
 class TestConfig(Config):
     LOG_LEVEL = "DEBUG"
     MONGO_URI = os.getenv('MONGO_TEST_URI')
+    DEBUG = True

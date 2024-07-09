@@ -42,7 +42,6 @@ class MyTest(FlaskTestCase):
 
     def create_app(self):
         app = create_app(TestConfig)
-        app.run(debug=True)
         print("MMMMEEEEP")
         app.logger.warning("Meep")
         return app
