@@ -42,8 +42,7 @@ class MyTest(FlaskTestCase):
 
     def create_app(self):
         app = create_app(TestConfig)
-        print("MMMMEEEEP")
-        app.logger.warning("Meep")
+        app.logger.info("CONFIGS ARE %s", str(app.config))
         return app
 
     #def setUp(self):
@@ -59,9 +58,9 @@ class MyTest(FlaskTestCase):
     def test_status_ok(self):
         headers = {'Content-type': 'application/json'}
         response = self.client.get('/items/status', headers=headers)
-        print("MEEEP", flush=True)
         self.app.logger.error("BLAH")
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(1, 0)
 
     def test_reject_non_json(self):
         headers = {'Content-type': 'text/html'}
