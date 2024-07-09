@@ -60,6 +60,7 @@ class MyTest(FlaskTestCase):
         headers = {'Content-type': 'application/json'}
         response = self.client.get('/items/status', headers=headers)
         print("YARP")
+        self.app.logger.error("BLAH")
         self.assertEqual(response.status_code, 200)
 
     def test_reject_non_json(self):
