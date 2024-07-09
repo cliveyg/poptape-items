@@ -59,6 +59,7 @@ class MyTest(FlaskTestCase):
     def test_status_ok(self):
         headers = {'Content-type': 'application/json'}
         response = self.client.get('/items/status', headers=headers)
+        print("MEEEP", flush=True)
         self.app.logger.error("BLAH")
         self.assertEqual(response.status_code, 200)
 
