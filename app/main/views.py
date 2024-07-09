@@ -286,7 +286,7 @@ def delete_item(public_id, request, item_id):
 
 @bp.route('/items/status', methods=['GET'])
 def system_running():
-
+    app.logger.info("YYYYAAARRRP")
     return jsonify({ 'message': 'System running...' }), 200
 
 #-----------------------------------------------------------------------------#
