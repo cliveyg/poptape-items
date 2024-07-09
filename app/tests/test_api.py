@@ -42,13 +42,14 @@ class MyTest(FlaskTestCase):
 
     def create_app(self):
         app = create_app(TestConfig)
+        app.logger.warning("Meep")
         return app
 
-    def setUp(self):
-        mongo.db.items.drop()
+    #def setUp(self):
+    #    mongo.db.items.drop()
 
-    def tearDown(self):
-        mongo.db.items.drop()
+    #def tearDown(self):
+    #    mongo.db.items.drop()
 
     # --------------------------------------------------------------------------- #
     #                                tests                                        #
