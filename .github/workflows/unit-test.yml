@@ -56,9 +56,11 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       # have to create an .env file to be able to run unit tests
-      - name: Create .env file from github secrets
+      - name: Create .env file from github secrets and set PYTHONUNBUFFERED=0 env
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
+          export PYTHONUNBUFFERED=0
+          
 
       # - name: Create DB tables
       #  run: |
