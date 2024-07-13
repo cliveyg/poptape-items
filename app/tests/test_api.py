@@ -45,6 +45,7 @@ class MyTest(FlaskTestCase):
         app = create_app(TestConfig)
         app.logger.info("in create_app")
         app.logger.info("CONFIGS ARE %s", str(app.config))
+
         return app
 
     def setUp(self):

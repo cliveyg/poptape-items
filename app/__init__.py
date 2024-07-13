@@ -32,12 +32,15 @@ def create_app(config_class=Config):
     handler.setFormatter(formatter)
     app.logger.addHandler(handler)
 
-    app.logger.info("BLING")
+    app.logger.info("=-=-=-=-=-=-=-=-=-=-= BLING =-=-=-=-=-=-=-=-=-=-=")
+    app.logger.info("MONGO_URI IS %s", app.config['MONGO_URI'])
 
     # initial flask extensions
     limiter.init_app(app)
     flask_uuid.init_app(app)
     mongo.init_app(app)
+
+
 
     # blueprints
     from app.main import bp as main_bp
