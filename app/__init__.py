@@ -13,20 +13,6 @@ def create_app(config_class=Config):
     # set app configs
     app.config.from_object(config_class)
 
-    # initial flask extensions
-    limiter.init_app(app)
-    flask_uuid.init_app(app)
-    mongo.init_app(app)
-
-    # blueprints
-    from app.main import bp as main_bp
-    app.register_blueprint(main_bp)
-
-    # register custom errors
-    app.register_error_handler(429, handle_429_request)
-    app.register_error_handler(405, handle_wrong_method)
-    app.register_error_handler(404, handle_not_found)
-
     # logging stuff
     formatter = logging.Formatter("[%(asctime)s] [%(pathname)s:%(lineno)d] %(levelname)s - %(message)s")
     handler = RotatingFileHandler(app.config['LOG_FILENAME'], maxBytes=10000000, backupCount=5)
@@ -45,6 +31,22 @@ def create_app(config_class=Config):
 
     handler.setFormatter(formatter)
     app.logger.addHandler(handler)
+
+    app.logger.info("BLING")
+
+    # initial flask extensions
+    limiter.init_app(app)
+    flask_uuid.init_app(app)
+    mongo.init_app(app)
+
+    # blueprints
+    from app.main import bp as main_bp
+    app.register_blueprint(main_bp)
+
+    # register custom errors
+    app.register_error_handler(429, handle_429_request)
+    app.register_error_handler(405, handle_wrong_method)
+    app.register_error_handler(404, handle_not_found)
 
     return app
 

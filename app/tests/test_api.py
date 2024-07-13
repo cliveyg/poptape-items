@@ -43,19 +43,21 @@ class MyTest(FlaskTestCase):
 
     def create_app(self):
         app = create_app(TestConfig)
-        app.mongo.init_app(app)
+        app.logger.info("in create_app")
         app.logger.info("CONFIGS ARE %s", str(app.config))
         return app
 
     def setUp(self):
-        collections = self.app.mongo.list_collection_names()
-        if 'items' in collections:
-            self.app.mongo.items.drop()
-            _ = self.app.mongo["items"]
-            self.app.logger.info('Items collection created')
+        self.app.logger.info("in setUp")
+        # collections = self.app.mongo.list_collection_names()
+        # if 'items' in collections:
+        #     self.app.mongo.items.drop()
+        #     _ = self.app.mongo["items"]
+        #     self.app.logger.info('Items collection created')
 
     def tearDown(self):
-        self.app.mongo.items.drop()
+        self.app.logger.info("in tearDown")
+        # self.app.mongo.items.drop()
 
     # --------------------------------------------------------------------------- #
     #                                tests                                        #
