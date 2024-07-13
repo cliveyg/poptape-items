@@ -44,7 +44,9 @@ class MyTest(FlaskTestCase):
     def create_app(self):
         app = create_app(TestConfig)
         app.logger.info("in create_app")
-        app.logger.info("CONFIGS ARE %s", str(app.config))
+        # app.logger.info("CONFIGS ARE %s", str(app.config))
+        urrrrl = app.config['MONGO_URI']
+        app.logger.info("URI IS %s", urrrrl)
 
         return app
 
