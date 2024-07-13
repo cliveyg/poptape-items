@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_pymongo import PyMongo
 
 from app.extensions import limiter, mongo, flask_uuid
 from app.config import Config
@@ -38,8 +39,9 @@ def create_app(config_class=Config):
     # initial flask extensions
     limiter.init_app(app)
     flask_uuid.init_app(app)
-    mongo.init_app(app)
-    app.logger.info("MONGO IS %s", str(app.mongo))
+    mongo.init_app(app, uri=app.config['MONGO_URI'])
+    # mongo = PyMongo(app, uri=app.config['MONGO_URI'])
+    app.logger.info("MONGO IS %s", str(app))
 
 
     # blueprints
