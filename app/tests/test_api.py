@@ -29,7 +29,8 @@ def mock_dec(access_level, request):
 
 patch('app.decorators.require_access_level', mock_dec).start()
 
-from app import create_app, mongo
+# from app import create_app, mongo
+from app import create_app
 from app.config import TestConfig
 from flask_testing import TestCase as FlaskTestCase
 
@@ -42,14 +43,19 @@ class MyTest(FlaskTestCase):
 
     def create_app(self):
         app = create_app(TestConfig)
+        app.mongo.init_app(app)
         app.logger.info("CONFIGS ARE %s", str(app.config))
         return app
 
-    #def setUp(self):
-    #    mongo.db.items.drop()
+    def setUp(self):
+        collections = self.app.mongo.list_collection_names()
+        if 'items' in collections:
+            self.app.mongo.items.drop()
+            _ = self.app.mongo["items"]
+            self.app.logger.info('Items collection created')
 
-    #def tearDown(self):
-    #    mongo.db.items.drop()
+    def tearDown(self):
+        self.app.mongo.items.drop()
 
     # --------------------------------------------------------------------------- #
     #                                tests                                        #
@@ -58,15 +64,13 @@ class MyTest(FlaskTestCase):
     def test_status_ok(self):
         headers = {'Content-type': 'application/json'}
         response = self.client.get('/items/status', headers=headers)
-        self.app.logger.error("BLAH")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(1, 0)
 
     def test_reject_non_json(self):
         headers = {'Content-type': 'text/html'}
         response = self.client.get('/items/status', headers=headers)
-
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(1, 0)
 
     def test_404(self):
         headers = {'Content-type': 'application/json'}
