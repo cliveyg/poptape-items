@@ -8,6 +8,8 @@ from app.errors import handle_429_request, handle_wrong_method, handle_not_found
 import logging
 from logging.handlers import RotatingFileHandler
 
+import pprint
+
 def create_app(config_class=Config):
 
     app = Flask(__name__)
@@ -41,7 +43,7 @@ def create_app(config_class=Config):
     flask_uuid.init_app(app)
     mongo.init_app(app, uri=app.config['MONGO_URI'])
     # mongo = PyMongo(app, uri=app.config['MONGO_URI'])
-    app.logger.info("MONGO IS %s", str(app))
+    app.logger.info("MONGO IS %s", pprint.pprint(app.__dict__))
 
 
     # blueprints
