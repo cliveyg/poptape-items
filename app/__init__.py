@@ -39,7 +39,7 @@ def create_app(config_class=Config):
     limiter.init_app(app)
     flask_uuid.init_app(app)
     mongo.init_app(app)
-
+    app.logger.info("MONGO IS %s", str(app.mongo))
 
 
     # blueprints
