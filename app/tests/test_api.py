@@ -135,7 +135,7 @@ class MyTest(FlaskTestCase):
         self.assertEqual(returned_data.get('error'), "'description' is a required property")
 
     def test_create_item_fail_no_category(self):
-        headers = {'Content-type': 'application/json'}
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         create_json = {'name': 'my test item',
                        'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum'}
 
