@@ -113,4 +113,14 @@ class MyTest(FlaskTestCase):
         response = self.client.post('/items', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 400)
         returned_data = response.json
-        self.assertEqual(returned_data.get('error'), "blah")
+        self.assertEqual(returned_data.get('error'), "'name' is a required property")
+
+    def test_create_item_fail_no_description(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        create_json = {'name': 'blah blah blah',
+                       'category': 'computers-vintage'}
+
+        response = self.client.post('/items', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 400)
+        returned_data = response.json
+        self.assertEqual(returned_data.get('error'), "'description' is a required property")
