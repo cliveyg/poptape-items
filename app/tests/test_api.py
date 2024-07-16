@@ -30,7 +30,7 @@ def mock_dec(access_level, request):
 patch('app.decorators.require_access_level', mock_dec).start()
 
 # from app import create_app, mongo
-from app import create_app
+from app import create_app, mongo
 from app.config import TestConfig
 from flask_testing import TestCase as FlaskTestCase
 
@@ -43,6 +43,7 @@ class MyTest(FlaskTestCase):
 
     def create_app(self):
         app = create_app(TestConfig)
+
         app.logger.info("in create_app")
         # app.logger.info("CONFIGS ARE %s", str(app.config))
         # urrrrl = app.config['MONGO_URI']
@@ -52,8 +53,12 @@ class MyTest(FlaskTestCase):
 
     def setUp(self):
         self.app.logger.info("in setUp")
+        collections = mongo.db.list_collection_names()
         # collections = self.app.mongo.list_collection_names()
-        # if 'items' in collections:
+        if 'items' in collections:
+            self.app.logger.info("FOUND ITEMS")
+        else:
+            self.app.logger.info("NOT FOUND ITEMS")
         #     self.app.mongo.items.drop()
         #     _ = self.app.mongo["items"]
         #     self.app.logger.info('Items collection created')
