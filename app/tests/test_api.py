@@ -43,29 +43,19 @@ class MyTest(FlaskTestCase):
 
     def create_app(self):
         app = create_app(TestConfig)
-
-        app.logger.info("in create_app")
-        # app.logger.info("CONFIGS ARE %s", str(app.config))
-        # urrrrl = app.config['MONGO_URI']
-        # app.logger.info("URI IS %s", urrrrl)
-
         return app
 
     def setUp(self):
-        self.app.logger.info("in setUp")
         collections = mongo.db.list_collection_names()
         # collections = self.app.mongo.list_collection_names()
         if 'items' in collections:
-            self.app.logger.info("FOUND ITEMS")
-        else:
-            self.app.logger.info("NOT FOUND ITEMS")
-        #     self.app.mongo.items.drop()
-        #     _ = self.app.mongo["items"]
-        #     self.app.logger.info('Items collection created')
+            self.app.logger.info("Found 'items' collection")
+            mongo.db.items.drop()
+            self.app.logger.info("'items' collection dropped")
 
     def tearDown(self):
-        self.app.logger.info("in tearDown")
-        # self.app.mongo.items.drop()
+        self.app.logger.info("Dropping 'items' collection")
+        self.app.mongo.db.items.drop()
 
     # --------------------------------------------------------------------------- #
     #                                tests                                        #
@@ -91,4 +81,3 @@ class MyTest(FlaskTestCase):
         headers = {'Content-type': 'application/json'}
         response = self.client.delete('/items/status', headers=headers)
         self.assertEqual(response.status_code, 405)
-        self.assertEqual(1, 0)
