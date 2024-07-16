@@ -21,5 +21,5 @@ class TestConfig(Config):
     LOG_LEVEL = "DEBUG"
     TESTING = True
     # MONGO_URI = os.getenv('MONGO_TEST_URI')
-    MONGO_URI = "mongodb://poptape_items_test:wfao47b3cr4R7a2667@localhost:27017/poptape_items_test"
+    MONGO_URI = "mongodb://poptape_items_test:wfao47b3cr4R7a2667@localhost:27017/poptape_items_test?authMechanism=DEFAULT&authSource=admin"
     DEBUG = True
