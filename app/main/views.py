@@ -28,7 +28,7 @@ def create_item(public_id, request):
    
     #TODO: items can have many fields - hence the choice of a nosql datastore
     # need to lock this down a bit more - at the mo we only insist on item_id
-    # and description
+    # and description
     # check input is valid json
     try:
         data = request.get_json()
