@@ -60,9 +60,9 @@ jobs:
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
           export PYTHONUNBUFFERED=0
-          echo "$(db.runCommand('ping').ok | mongosh --quiet)"
+          echo "$(db.runCommand(\"ping\").ok | mongosh --quiet)"
           echo "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="
-          echo "$(db.runCommand('ping').ok)"
+          echo "$(db.runCommand(\"ping\").ok)"
 
       # - name: Create DB tables
       #  run: |
