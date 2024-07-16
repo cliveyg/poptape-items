@@ -50,12 +50,12 @@ class MyTest(FlaskTestCase):
         # collections = self.app.mongo.list_collection_names()
         if 'items' in collections:
             self.app.logger.info("Found 'items' collection")
-            mongo.db.items.drop()
+            # mongo.db.items.drop()
             self.app.logger.info("'items' collection dropped")
 
     def tearDown(self):
         self.app.logger.info("Dropping 'items' collection")
-        self.app.mongo.db.items.drop()
+        # self.app.mongo.db.items.drop()
 
     # --------------------------------------------------------------------------- #
     #                                tests                                        #
