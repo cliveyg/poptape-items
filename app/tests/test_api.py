@@ -41,6 +41,14 @@ from flask_testing import TestCase as FlaskTestCase
 #                         flask test case instance                            #
 ###############################################################################
 
+def is_valid_uuid(uuid_to_test, version=4):
+    try:
+        # check for validity of Uuid
+        uuid.UUID(uuid_to_test, version=version)
+    except ValueError:
+        return False
+    return True
+
 class MyTest(FlaskTestCase):
 
     def create_app(self):
@@ -94,3 +102,15 @@ class MyTest(FlaskTestCase):
 
         response = self.client.post('/items', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 201)
+        returned_data = response.json
+        self.assertTrue(is_valid_uuid(returned_data.get('item_id')), "Invalid item UUID returned")
+
+    def test_create_item_fail_no_name(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        create_json = {'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
+                       'category': 'computers-vintage'}
+
+        response = self.client.post('/items', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 400)
+        returned_data = response.json
+        self.assertEqual(returned_data.get('error'), "blah")
