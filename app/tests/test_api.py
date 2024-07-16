@@ -1,6 +1,8 @@
 # app/tests/test_api.py
 # from mock import patch, MagicMock
 # from unittest import mock
+import uuid
+
 from mock import patch
 from functools import wraps
 from .fixtures import getPublicID, exceptionFactory
@@ -86,9 +88,9 @@ class MyTest(FlaskTestCase):
 
     def test_create_item_ok(self):
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
-        create_json = {'name': getPublicID(),
-                       'description': 'The Larches',
-                       'category': '12'}
+        create_json = {'name': 'my test item',
+                       'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
+                       'category': 'computers-vintage'}
 
         response = self.client.post('/items', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 201)
