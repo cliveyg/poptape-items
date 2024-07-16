@@ -105,6 +105,22 @@ class MyTest(FlaskTestCase):
         returned_data = response.json
         self.assertTrue(is_valid_uuid(returned_data.get('item_id')), "Invalid item UUID returned")
 
+        pub_id = getPublicID()
+        collection_name = 'z'+pub_id.replace('-','')
+        self.assertEqual(returned_data.get('bucket_url'), "https://"+collection_name.lower()+".s3.amazonaws.com/")
+
+    def test_create_item_fail_fields_too_short(self):
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        create_json = {'name': 'my te',
+                       'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
+                       'category': 'comp'}
+
+        response = self.client.post('/items', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 400)
+        returned_data = response.json
+        self.assertEqual(returned_data.get('error'), "'name' is a required property")
+
+
     def test_create_item_fail_no_token(self):
         headers = {'Content-type': 'application/json'}
         create_json = {'name': 'my test item',
