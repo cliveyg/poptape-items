@@ -22,12 +22,12 @@ jobs:
         image: mongo
         # provide the login and db deets for mongo
         env:
-          MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-          MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-        # MONGO_INITDB_DATABASE: poptape_items
+          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_TESTDB_ROOT_USERNAME }}
+          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_TESTDB_ROOT_PASSWORD }}
+          MONGO_INITDB_DATABASE: ${{ secrets.MONGO_TESTDB_NAME }}
         ports:
           # maps tcp port 27017 on service container to the host
-          - 1243:27017
+          - 27017:27017
         # set health checks to wait until mongo has started
         options: >-
           --health-cmd "echo 'db.runCommand("ping").ok' | mongosh --quiet"
@@ -56,9 +56,10 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       # have to create an .env file to be able to run unit tests
-      - name: Create .env file from github secrets
+      - name: Create .env file from github secrets and set PYTHONUNBUFFERED=0 env
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
+          export PYTHONUNBUFFERED=0
 
       # - name: Create DB tables
       #  run: |
