@@ -83,3 +83,12 @@ class MyTest(FlaskTestCase):
         headers = {'Content-type': 'application/json'}
         response = self.client.delete('/items/status', headers=headers)
         self.assertEqual(response.status_code, 405)
+
+    def test_create_item_ok(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        create_json = {'name': getPublicID(),
+                       'description': 'The Larches',
+                       'category': '12'}
+
+        response = self.client.post('/items', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 201)
