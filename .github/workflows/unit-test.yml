@@ -60,8 +60,7 @@ jobs:
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
           export PYTHONUNBUFFERED=0
-          ping -c 2 mongodb
-          
+          echo 'db.runCommand("ping").ok' | mongosh --quiet
 
       # - name: Create DB tables
       #  run: |
