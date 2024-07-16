@@ -45,8 +45,8 @@ class MyTest(FlaskTestCase):
         app = create_app(TestConfig)
         app.logger.info("in create_app")
         # app.logger.info("CONFIGS ARE %s", str(app.config))
-        urrrrl = app.config['MONGO_URI']
-        app.logger.info("URI IS %s", urrrrl)
+        # urrrrl = app.config['MONGO_URI']
+        # app.logger.info("URI IS %s", urrrrl)
 
         return app
 
@@ -75,7 +75,6 @@ class MyTest(FlaskTestCase):
         headers = {'Content-type': 'text/html'}
         response = self.client.get('/items/status', headers=headers)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(1, 0)
 
     def test_404(self):
         headers = {'Content-type': 'application/json'}
@@ -87,3 +86,4 @@ class MyTest(FlaskTestCase):
         headers = {'Content-type': 'application/json'}
         response = self.client.delete('/items/status', headers=headers)
         self.assertEqual(response.status_code, 405)
+        self.assertEqual(1, 0)
