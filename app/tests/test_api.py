@@ -57,6 +57,7 @@ class MyTest(FlaskTestCase):
 
     def setUp(self):
         collections = mongo.db.list_collection_names()
+        self.app.logger.info("setUp")
         if 'items' in collections:
             self.app.logger.info("Found 'items' collection")
             mongo.db.items.drop()
@@ -64,6 +65,7 @@ class MyTest(FlaskTestCase):
 
     def tearDown(self):
         collections = mongo.db.list_collection_names()
+        self.app.logger.info("tearDown")
         if 'items' in collections:
             self.app.logger.info("Found 'items' collection")
             mongo.db.items.drop()
@@ -109,17 +111,27 @@ class MyTest(FlaskTestCase):
         collection_name = 'z'+pub_id.replace('-','')
         self.assertEqual(returned_data.get('bucket_url'), "https://"+collection_name.lower()+".s3.amazonaws.com/")
 
-    def test_create_item_fail_fields_too_short(self):
+    def test_create_item_fail_name_too_short(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         create_json = {'name': 'my te',
                        'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-                       'category': 'comp'}
+                       'category': 'computers-new'}
 
         response = self.client.post('/items', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 400)
         returned_data = response.json
-        self.assertEqual(returned_data.get('error'), "'name' is a required property")
+        self.assertEqual(returned_data.get('error'), "'my te' is too short")
 
+    def test_create_item_fail_category_too_short(self):
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        create_json = {'name': 'my test name',
+                       'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
+                       'category': 'com'}
+
+        response = self.client.post('/items', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 400)
+        returned_data = response.json
+        self.assertEqual(returned_data.get('error'), "'com' is too short")
 
     def test_create_item_fail_no_token(self):
         headers = {'Content-type': 'application/json'}
