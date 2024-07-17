@@ -175,6 +175,27 @@ class MyTest(FlaskTestCase):
         self.assertEqual(returned_item1.get('category'), data1.get('category'))
         self.assertEqual(returned_item2.get('category'), data2.get('category'))
 
+    def test_bulk_fetch_item_ok_other_404(self):
+
+        item1_id, data1 = createItem(name="name 3", category="cars-new")
+        item2_id, data2 = createItem(name="name 4", category="bikes")
+
+        create_json = { 'item_ids': [item1_id, str(uuid.uuid4())]}
+        headers = {'Content-type': 'application/json'}
+
+        response = self.client.post('/items/bulk/fetch', headers=headers, json=create_json)
+
+        self.assertEqual(response.status_code, 200)
+        returned_data = response.json
+
+        returned_item1 = next((item for item in returned_data.get('items') if item['item_id'] == item1_id), None)
+        self.assertNotEqual(returned_item1, None)
+        returned_item2 = next((item for item in returned_data.get('items') if item['item_id'] == item2_id), None)
+        self.assertEqual(returned_item2, None)
+
+        self.assertEqual(returned_item1.get('name'), data1.get('name'))
+        self.assertEqual(returned_item1.get('category'), data1.get('category'))
+
     def test_create_item_fail_name_too_short(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         create_json = {'name': 'my te',
