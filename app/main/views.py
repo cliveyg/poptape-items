@@ -145,7 +145,8 @@ def get_items_by_user(public_id, request):
         starting_id = mongo.db.items.find({ 'details.public_id': public_id }).sort('_id', ASCENDING)
         #starting_id = mongo.db.items.find({ 'details.public_id': public_id }).sort('created', ASCENDING)
         results_count = starting_id.count()
-    except:
+    except Exception as e:
+        app.logger.error("Error: [%s]", e)
         app.logger.info("WOOOOOOP 1")
         return jsonify({ 'message': 'There\'s a problem with your arguments or mongo or both or something else ;)'}), 400
 
