@@ -50,7 +50,9 @@ def is_valid_uuid(uuid_to_test, version=4):
         return False
     return True
 
-def createItem(**kwargs):
+
+def create_item(**kwargs):
+
     data = {'name': 'my test item 1',
             'description': 'blah lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
             'category': 'consoles-vintage:3341',
@@ -65,11 +67,12 @@ def createItem(**kwargs):
     item_id = str(uuid.uuid4())
 
     try:
-        mongo.db.items.insert_one({"_id" : item_id, "details": data})
+        mongo.db.items.insert_one({"_id": item_id, "details": data})
     except Exception as e:
         return e
 
     return item_id, data
+
 
 class MyTest(FlaskTestCase):
 
@@ -142,7 +145,7 @@ class MyTest(FlaskTestCase):
         self.assertTrue(is_valid_uuid(returned_data.get('item_id')), "Invalid item UUID returned")
 
     def test_fetch_item_ok(self):
-        item_id, data = createItem(name="name 1")
+        item_id, data = create_item(name="name 1")
         headers = {'Content-type': 'application/json'}
         response = self.client.get('/items/'+item_id, headers=headers)
         self.assertEqual(response.status_code, 200)
@@ -154,10 +157,10 @@ class MyTest(FlaskTestCase):
 
     def test_bulk_fetch_items_ok(self):
 
-        item1_id, data1 = createItem(name="name 1", category="cars-new")
-        item2_id, data2 = createItem(name="name 2", category="bikes")
+        item1_id, data1 = create_item(name="name 1", category="cars-new")
+        item2_id, data2 = create_item(name="name 2", category="bikes")
 
-        create_json = { 'item_ids': [item1_id, item2_id]}
+        create_json = {'item_ids': [item1_id, item2_id]}
         headers = {'Content-type': 'application/json'}
 
         response = self.client.post('/items/bulk/fetch', headers=headers, json=create_json)
@@ -177,10 +180,10 @@ class MyTest(FlaskTestCase):
 
     def test_bulk_fetch_item_ok_other_404(self):
 
-        item1_id, data1 = createItem(name="name 3", category="cars-new")
-        item2_id, data2 = createItem(name="name 4", category="bikes")
+        item1_id, data1 = create_item(name="name 3", category="cars-new")
+        item2_id, data2 = create_item(name="name 4", category="bikes")
 
-        create_json = { 'item_ids': [item1_id, str(uuid.uuid4())]}
+        create_json = {'item_ids': [item1_id, str(uuid.uuid4())]}
         headers = {'Content-type': 'application/json'}
 
         response = self.client.post('/items/bulk/fetch', headers=headers, json=create_json)
@@ -198,7 +201,7 @@ class MyTest(FlaskTestCase):
         self.assertEqual(returned_item1.get('category'), data1.get('category'))
 
     def test_fail_bulk_fetch_bad_inputs_1(self):
-        create_json = { 'item_ids': ["some-blah", str(uuid.uuid4())]}
+        create_json = {'item_ids': ["some-blah", str(uuid.uuid4())]}
         headers = {'Content-type': 'application/json'}
 
         response = self.client.post('/items/bulk/fetch', headers=headers, json=create_json)
@@ -208,7 +211,7 @@ class MyTest(FlaskTestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_fail_bulk_fetch_bad_inputs_2(self):
-        create_json = { 'item_ids': ["bca9ee07-e4c8-49ff-b7ee-c1d697d14c9x", str(uuid.uuid4())]}
+        create_json = {'item_ids': ["bca9ee07-e4c8-49ff-b7ee-c1d697d14c9x", str(uuid.uuid4())]}
         headers = {'Content-type': 'application/json'}
 
         response = self.client.post('/items/bulk/fetch', headers=headers, json=create_json)
@@ -219,7 +222,7 @@ class MyTest(FlaskTestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_fail_bulk_fetch_bad_inputs_3(self):
-        create_json = { 'something': "bca9ee07-e4c8-49ff-b7ee-c1d697d14c9x"}
+        create_json = {'something': "bca9ee07-e4c8-49ff-b7ee-c1d697d14c9x"}
         headers = {'Content-type': 'application/json'}
 
         response = self.client.post('/items/bulk/fetch', headers=headers, json=create_json)
@@ -233,9 +236,9 @@ class MyTest(FlaskTestCase):
         test_data = []
         for x in range(5):
             if x != 4:
-                item_id, data = createItem(name="name "+str(x), public_id=getSpecificPublicID())
+                item_id, data = create_item(name="name " + str(x), public_id=getSpecificPublicID())
             else:
-                item_id, data = createItem(name="name "+str(x), public_id=getPublicID())
+                item_id, data = create_item(name="name " + str(x), public_id=getPublicID())
             test_data.append({"item_id": item_id, "data": data})
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         response = self.client.get('/items', headers=headers)
@@ -249,7 +252,7 @@ class MyTest(FlaskTestCase):
     def test_get_items_by_user_pagination_ok(self):
         test_data = []
         for x in range(8):
-            item_id, data = createItem(name="name "+str(x), public_id=getSpecificPublicID())
+            item_id, data = create_item(name="name " + str(x), public_id=getSpecificPublicID())
             test_data.append({"item_id": item_id, "data": data})
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         response = self.client.get('/items', headers=headers)
@@ -281,7 +284,7 @@ class MyTest(FlaskTestCase):
         self.assertEqual(returned_data.get('message'), "Problem with your args")
 
     def test_get_items_by_user_return_404(self):
-        createItem()
+        create_item()
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         response = self.client.get('/items', headers=headers)
         returned_data = response.json
@@ -351,11 +354,13 @@ class MyTest(FlaskTestCase):
 
     def test_get_items_by_category_ok(self):
         test_data = []
-        for x in range(1,7):
+        sofa_data = []
+        for x in range(1, 7):
             if x % 2 == 0:
-                item_id, data = createItem(name="name "+str(x), category="fridges-old:1677")
+                item_id, data = create_item(name="name " + str(x), category="fridges-old:1677")
             else:
-                item_id, data = createItem(name="name "+str(x), category="sofas-new:881")
+                item_id, data = create_item(name="name " + str(x), category="sofas-new:881")
+                sofa_data.append({"item_id": item_id, "data": data})
             test_data.append({"item_id": item_id, "data": data})
 
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
@@ -363,8 +368,10 @@ class MyTest(FlaskTestCase):
         self.assertEqual(response.status_code, 200)
         returned_data = response.json
         self.assertEqual(len(returned_data.get('items')), 3)
+        sorted_returned_items = sorted(returned_data.get('items'), key=lambda d: d['name'])
+        sorted_sofa_data = sorted(sofa_data, key=lambda d: d['name'])
 
-        for item in returned_data.get('items'):
+        for item in sorted_returned_items:
             self.assertEqual(item.get('category'), "sofas-new:881")
 
-
+        self.assertListEqual(sorted_returned_items, sorted_sofa_data)
