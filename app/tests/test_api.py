@@ -50,15 +50,20 @@ def is_valid_uuid(uuid_to_test, version=4):
         return False
     return True
 
-def createItem():
+def createItem(**kwargs):
     data = {'name': 'my test item 1',
             'description': 'blah lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
             'category': 'consoles-vintage',
-            'yarp': 'narp'}
+            'yarp': 'narp',
+            'public_id': getPublicID(),
+            'created': datetime.datetime.utcnow(),
+            'modified': datetime.datetime.utcnow()}
+    # can override default options here
+    for key, value in kwargs.items():
+        data[key] = value
+
     item_id = str(uuid.uuid4())
-    data['public_id'] = getPublicID()
-    data['created'] = datetime.datetime.utcnow()
-    data['modified'] = datetime.datetime.utcnow()
+
     try:
         mongo.db.items.insert_one({"_id" : item_id, "details": data})
     except Exception as e:
@@ -136,8 +141,8 @@ class MyTest(FlaskTestCase):
         returned_data = response.json
         self.assertTrue(is_valid_uuid(returned_data.get('item_id')), "Invalid item UUID returned")
 
-    def test_create_fetch_item_ok(self):
-        item_id, data = createItem()
+    def test_fetch_item_ok(self):
+        item_id, data = createItem(name="name 1")
         headers = {'Content-type': 'application/json'}
         response = self.client.get('/items/'+item_id, headers=headers)
         self.assertEqual(response.status_code, 200)
@@ -147,8 +152,24 @@ class MyTest(FlaskTestCase):
         self.assertEqual(data.get('yarp'), returned_data.get('yarp'))
         self.assertEqual(data.get('category'), returned_data.get('category'))
 
+    def test_bulk_fetch_items_ok(self):
 
+        item1_id, data1 = createItem(name="name 1")
+        item2_id, data2 = createItem(name="name 2")
 
+        create_json = { 'item_ids': [item1_id, item2_id]}
+        headers = {'Content-type': 'application/json'}
+
+        response = self.client.post('/items/bulk/fetch', headers=headers, json=create_json)
+
+        self.assertEqual(response.status_code, 200)
+        returned_data = response.json
+        self.app.logger.info("RETURNED DATA IS: %s", returned_data)
+        self.assertEqual(0, 1)
+        #self.assertEqual(item_id, returned_data.get('item_id'))
+        #self.assertEqual(data.get('description'), returned_data.get('description'))
+        #self.assertEqual(data.get('yarp'), returned_data.get('yarp'))
+        #self.assertEqual(data.get('category'), returned_data.get('category'))
 
     def test_create_item_fail_name_too_short(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
