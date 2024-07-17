@@ -358,14 +358,17 @@ class MyTest(FlaskTestCase):
         for x in range(1, 7):
             if x % 2 == 0:
                 item_id, data = create_item(name="name " + str(x), category="fridges-old:1677")
+                test_data.append({"item_id": item_id, "data": data})
             else:
                 item_id, data = create_item(name="name " + str(x), category="sofas-new:881")
-                sofa_data.append({"item_id": item_id, "data": data})
-            test_data.append({"item_id": item_id, "data": data})
+                test_data.append({"item_id": item_id, "data": data})
+                data["item_id"] = item_id
+                sofa_data.append(data)
+
 
         self.app.logger.info("0-0-0-0-0-0-0-0-0-00-0-0-0-0-0-0-0-0-0-0-0")
-        self.app.logger.info("LEN OF SOFA DATA IS %d",len(sofa_data))
-        self.app.logger.info("SOFA DATA IS %s",str(sofa_data))
+        self.app.logger.info("LEN OF SOFA DATA IS %d", len(sofa_data))
+        self.app.logger.info("SOFA DATA IS %s", str(sofa_data))
 
 
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
@@ -383,5 +386,8 @@ class MyTest(FlaskTestCase):
 
         for item in sorted_returned_items:
             self.assertEqual(item.get('category'), "sofas-new:881")
+
+        for x in range(0, 2):
+            self.assertDictEqual(sorted_returned_items[x], sorted_sofa_data[x])
 
         self.assertListEqual(sorted_returned_items, sorted_sofa_data)
