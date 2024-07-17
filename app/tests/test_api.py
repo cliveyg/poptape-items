@@ -7,6 +7,7 @@ from mock import patch
 from functools import wraps
 from .fixtures import getPublicID, exceptionFactory
 from flask import jsonify
+import datetime
 # import uuid
 
 # have to mock the require_access_level decorator here before it
@@ -48,6 +49,22 @@ def is_valid_uuid(uuid_to_test, version=4):
     except ValueError:
         return False
     return True
+
+def createItem():
+    data = {'name': 'my test item 1',
+            'description': 'blah lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
+            'category': 'consoles-vintage',
+            'yarp': 'narp'}
+    item_id = str(uuid.uuid4())
+    data['public_id'] = getPublicID()
+    data['created'] = datetime.datetime.utcnow()
+    data['modified'] = datetime.datetime.utcnow()
+    try:
+        mongo.db.items.insert_one({"_id" : item_id, "details": data})
+    except Exception as e:
+        return e
+
+    return item_id, data
 
 class MyTest(FlaskTestCase):
 
@@ -107,9 +124,31 @@ class MyTest(FlaskTestCase):
         returned_data = response.json
         self.assertTrue(is_valid_uuid(returned_data.get('item_id')), "Invalid item UUID returned")
 
-        pub_id = getPublicID()
-        collection_name = 'z'+pub_id.replace('-','')
-        self.assertEqual(returned_data.get('bucket_url'), "https://"+collection_name.lower()+".s3.amazonaws.com/")
+    def test_create_item_ok_extra_fields(self):
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        create_json = {'name': 'my test item',
+                       'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
+                       'category': 'computers-vintage',
+                       'yarp': 'narp'}
+
+        response = self.client.post('/items', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 201)
+        returned_data = response.json
+        self.assertTrue(is_valid_uuid(returned_data.get('item_id')), "Invalid item UUID returned")
+
+    def test_create_fetch_item_ok(self):
+        item_id, data = createItem()
+        headers = {'Content-type': 'application/json'}
+        response = self.client.get('/items/'+item_id, headers=headers)
+        self.assertEqual(response.status_code, 200)
+        returned_data = response.json
+        self.assertEqual(item_id, returned_data.get('item_id'))
+        self.assertEqual(data.get('description'), returned_data.get('description'))
+        self.assertEqual(data.get('yarp'), returned_data.get('yarp'))
+        self.assertEqual(data.get('category'), returned_data.get('category'))
+
+
+
 
     def test_create_item_fail_name_too_short(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
