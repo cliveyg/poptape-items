@@ -229,7 +229,7 @@ class MyTest(FlaskTestCase):
         self.assertDictEqual(returned_message, expected_message)
         self.assertEqual(response.status_code, 400)
 
-    def test_get_items_by_user(self):
+    def test_get_items_by_user_ok(self):
         test_data = []
         for x in range(5):
             if x != 4:
@@ -245,6 +245,33 @@ class MyTest(FlaskTestCase):
 
         for item in returned_data.get('items'):
             self.assertEqual(item.get('public_id'), getSpecificPublicID())
+
+    def test_get_items_by_user_pagination_ok(self):
+        test_data = []
+        for x in range(8):
+            item_id, data = createItem(name="name "+str(x), public_id=getSpecificPublicID())
+            test_data.append({"item_id": item_id, "data": data})
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        response = self.client.get('/items', headers=headers)
+        self.assertEqual(response.status_code, 200)
+        returned_data = response.json
+        self.assertEqual(len(returned_data.get('items')), 5)
+
+        for item in returned_data.get('items'):
+            self.assertEqual(item.get('public_id'), getSpecificPublicID())
+
+        self.assertEqual(returned_data.get('next_url'), "/items?limit=5&offset=5&sort=id_asc")
+
+        # call again so to obtain page 2
+        response2 = self.client.get('/items?limit=5&offset=5&sort=id_asc', headers=headers)
+        self.assertEqual(response2.status_code, 200)
+        returned_data2 = response2.json
+        self.assertEqual(len(returned_data2.get('items')), 3)
+
+        for item in returned_data2.get('items'):
+            self.assertEqual(item.get('public_id'), getSpecificPublicID())
+
+        self.assertEqual(returned_data2.get('prev_url'), "/items?limit=5&offset=0&sort=id_asc")
 
     def test_create_item_fail_name_too_short(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
