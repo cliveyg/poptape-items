@@ -280,6 +280,13 @@ class MyTest(FlaskTestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(returned_data.get('message'), "Problem with your args")
 
+    def test_get_items_by_user_return_404(self):
+
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        response = self.client.get('/items', headers=headers)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(returned_data.get('message'), "Nowt ere chap")
+
     def test_create_item_fail_name_too_short(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         create_json = {'name': 'my te',

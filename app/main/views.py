@@ -147,14 +147,13 @@ def get_items_by_user(public_id, request):
     results_count = 0
     try:
         starting_id = mongo.db.items.find({ 'details.public_id': public_id }).sort('_id', ASCENDING)
-        #starting_id = mongo.db.items.find({ 'details.public_id': public_id }).sort('created', ASCENDING)
         results_count = mongo.db.items.count_documents({ 'details.public_id': public_id })
     except Exception as e:
         app.logger.error("Error: [%s]", e)
         return jsonify({ 'message': 'There\'s a problem with your arguments or the db or both or something else ;)'}), 400
 
     if results_count == 0:
-        return jsonify({ 'message': 'Nowt here chap'}), 404
+        return jsonify({ 'message': 'Nowt ere chap'}), 404
 
     if results_count <= offset:
         return jsonify({ 'message': 'offset is too big'}), 400
