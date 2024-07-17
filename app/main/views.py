@@ -144,11 +144,10 @@ def get_items_by_user(public_id, request):
     try:
         starting_id = mongo.db.items.find({ 'details.public_id': public_id }).sort('_id', ASCENDING)
         #starting_id = mongo.db.items.find({ 'details.public_id': public_id }).sort('created', ASCENDING)
-        results_count = starting_id.count()
+        results_count = mongo.db.items.count_documents({ 'details.public_id': public_id }).sort('_id', ASCENDING)
     except Exception as e:
         app.logger.error("Error: [%s]", e)
-        app.logger.info("WOOOOOOP 1")
-        return jsonify({ 'message': 'There\'s a problem with your arguments or mongo or both or something else ;)'}), 400
+        return jsonify({ 'message': 'There\'s a problem with your arguments or the db or both or something else ;)'}), 400
 
     if results_count == 0:
         return jsonify({ 'message': 'Nowt here chap'}), 404
