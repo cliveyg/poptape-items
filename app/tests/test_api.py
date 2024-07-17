@@ -243,6 +243,9 @@ class MyTest(FlaskTestCase):
         returned_data = response.json
         self.assertEqual(len(returned_data.get('items')), 4)
 
+        for item in returned_data.get('items'):
+            self.assertEqual(item.get('public_id'), getSpecificPublicID())
+
     def test_create_item_fail_name_too_short(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         create_json = {'name': 'my te',
