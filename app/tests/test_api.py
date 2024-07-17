@@ -260,7 +260,7 @@ class MyTest(FlaskTestCase):
         for item in returned_data.get('items'):
             self.assertEqual(item.get('public_id'), getSpecificPublicID())
 
-        self.assertEqual(returned_data.get('next_url'), "blah")
+        self.assertEqual(returned_data.get('next_url'), "/items?limit=5&offset=5&sort=id_asc")
 
     def test_create_item_fail_name_too_short(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
