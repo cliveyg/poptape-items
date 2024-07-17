@@ -233,9 +233,9 @@ class MyTest(FlaskTestCase):
         test_data = []
         for x in range(5):
             if x != 4:
-                item_id, data = createItem(name="name "+x, public_id=getSpecificPublicID())
+                item_id, data = createItem(name="name "+str(x), public_id=getSpecificPublicID())
             else:
-                item_id, data = createItem(name="name "+x, public_id=getPublicID())
+                item_id, data = createItem(name="name "+str(x), public_id=getPublicID())
             test_data.append({"item_id": item_id, "data": data})
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         response = self.client.get('/items', headers=headers)
