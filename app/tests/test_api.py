@@ -273,6 +273,11 @@ class MyTest(FlaskTestCase):
 
         self.assertEqual(returned_data2.get('prev_url'), "/items?limit=5&offset=0&sort=id_asc")
 
+    def test_get_items_by_user_fail_bad_offset(self):
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        response = self.client.get('/items?limit=5&offset=WIBBLE&sort=id_asc', headers=headers)
+        self.assertEqual(response.status_code, 400)
+
     def test_create_item_fail_name_too_short(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         create_json = {'name': 'my te',
