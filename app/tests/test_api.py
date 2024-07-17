@@ -384,4 +384,4 @@ class MyTest(FlaskTestCase):
         for item in sorted_returned_items:
             self.assertEqual(item.get('category'), "sofas-new:881")
 
-        self.assertListEqual(sorted_returned_items, sorted_returned_items)
+        self.assertListEqual(sorted_returned_items, sorted_sofa_data)
