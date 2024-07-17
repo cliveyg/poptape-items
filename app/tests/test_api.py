@@ -188,6 +188,7 @@ class MyTest(FlaskTestCase):
         self.assertEqual(response.status_code, 200)
         returned_data = response.json
 
+        self.assertEqual(len(returned_data.get('items')), 1)
         returned_item1 = next((item for item in returned_data.get('items') if item['item_id'] == item1_id), None)
         self.assertNotEqual(returned_item1, None)
         returned_item2 = next((item for item in returned_data.get('items') if item['item_id'] == item2_id), None)
@@ -195,6 +196,16 @@ class MyTest(FlaskTestCase):
 
         self.assertEqual(returned_item1.get('name'), data1.get('name'))
         self.assertEqual(returned_item1.get('category'), data1.get('category'))
+
+    def test_fail_bulk_fetch_bad_inputs(self):
+        create_json = { 'item_ids': ["some-blah", str(uuid.uuid4())]}
+        headers = {'Content-type': 'application/json'}
+
+        response = self.client.post('/items/bulk/fetch', headers=headers, json=create_json)
+        returned_message = response.json
+        self.app.logger.info("RETUNRNED MESSAGE IS %s", returned_message)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(1, 0)
 
     def test_create_item_fail_name_too_short(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
