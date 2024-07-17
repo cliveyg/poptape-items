@@ -213,7 +213,6 @@ class MyTest(FlaskTestCase):
 
         response = self.client.post('/items/bulk/fetch', headers=headers, json=create_json)
         returned_message = response.json
-        self.app.logger.info("RETURNED MESSAGE IS %s", returned_message)
         expected_message = {'error': "'bca9ee07-e4c8-49ff-b7ee-c1d697d14c9x' does not match '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'",
                             'message': 'Check ya inputs mate.'}
         self.assertDictEqual(returned_message, expected_message)
