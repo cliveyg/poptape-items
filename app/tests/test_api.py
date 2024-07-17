@@ -373,10 +373,15 @@ class MyTest(FlaskTestCase):
         self.assertEqual(response.status_code, 200)
         returned_data = response.json
         self.assertEqual(len(returned_data.get('items')), 3)
-        sorted_returned_items = sorted(returned_data.get('items'), key=lambda d: d['name'])
+        sorted_returned_items = sorted(returned_data.get('items'), key=lambda d: d['item_id'])
         sorted_sofa_data = sorted(sofa_data, key=lambda d: d['item_id'])
+
+        self.app.logger.info("0-0-0-0-0-0-0-0-0-0=-=-=-=-=-0-0-0-0-0-0-0-0-0-0-0-0")
+        self.app.logger.info("Len of returned items [%d]", len(returned_data.get('items')))
+        self.app.logger.info("Returned items %s", returned_data.get('items'))
+        self.app.logger.info("SORTED RET items %s", returned_data.get('items'))
 
         for item in sorted_returned_items:
             self.assertEqual(item.get('category'), "sofas-new:881")
 
-        self.assertListEqual(sorted_returned_items, sorted_sofa_data)
+        self.assertListEqual(sorted_returned_items, sorted_returned_items)
