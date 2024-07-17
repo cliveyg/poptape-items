@@ -363,13 +363,18 @@ class MyTest(FlaskTestCase):
                 sofa_data.append({"item_id": item_id, "data": data})
             test_data.append({"item_id": item_id, "data": data})
 
+        self.app.logger.info("0-0-0-0-0-0-0-0-0-00-0-0-0-0-0-0-0-0-0-0-0")
+        self.app.logger.info("LEN OF SOFA DATA IS %d",len(sofa_data))
+        self.app.logger.info("SOFA DATA IS %s",str(sofa_data))
+
+
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         response = self.client.get('/items/cat/sofas-new:881', headers=headers)
         self.assertEqual(response.status_code, 200)
         returned_data = response.json
         self.assertEqual(len(returned_data.get('items')), 3)
         sorted_returned_items = sorted(returned_data.get('items'), key=lambda d: d['name'])
-        sorted_sofa_data = sorted(sofa_data, key=lambda d: d['name'])
+        sorted_sofa_data = sorted(sofa_data, key=lambda d: d['item_id'])
 
         for item in sorted_returned_items:
             self.assertEqual(item.get('category'), "sofas-new:881")
