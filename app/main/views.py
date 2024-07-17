@@ -306,7 +306,7 @@ def _return_document(item_id):
     
     del record['_id']
     item_details = record.get("details")
-
+    item_details['item_id'] = item_id
     return(item_details)
 
 # --------------------------------------------------------------------------- #
