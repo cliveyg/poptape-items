@@ -218,6 +218,18 @@ class MyTest(FlaskTestCase):
         self.assertDictEqual(returned_message, expected_message)
         self.assertEqual(response.status_code, 400)
 
+    def test_fail_bulk_fetch_bad_inputs_3(self):
+        create_json = { 'something': "bca9ee07-e4c8-49ff-b7ee-c1d697d14c9x"}
+        headers = {'Content-type': 'application/json'}
+
+        response = self.client.post('/items/bulk/fetch', headers=headers, json=create_json)
+        returned_message = response.json
+        self.app.logger.info("RET MESS: %s", returned_message)
+        expected_message = {'error': "'bca9ee07-e4c8-49ff-b7ee-c1d697d14c9x' does not match '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'",
+                            'message': 'Check ya inputs mate.'}
+        self.assertDictEqual(returned_message, expected_message)
+        self.assertEqual(response.status_code, 400)
+
     def test_create_item_fail_name_too_short(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         create_json = {'name': 'my te',
