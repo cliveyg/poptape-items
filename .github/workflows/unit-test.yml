@@ -42,7 +42,6 @@ jobs:
           wget -qO- https://www.mongodb.org/static/pgp/server-7.0.asc | sudo tee /etc/apt/trusted.gpg.d/server-7.0.asc
           echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
           sudo apt-get update && sudo apt-get install -y mongodb-mongosh
-          
 
       - uses: actions/checkout@v4
       - name: Setting up Python ${{ matrix.python-version }}
@@ -56,16 +55,9 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       # have to create an .env file to be able to run unit tests
-      - name: Create .env file from github secrets and set PYTHONUNBUFFERED=0 env
+      - name: Create .env file from github secrets
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
-          export PYTHONUNBUFFERED=0
-
-      # - name: Create DB tables
-      #  run: |
-      #    pwd
-      #    psql -h localhost -U poptape_auth_test password=${{ secrets.TESTDB_PASSWORD }} -f db_schema/poptape_auth_db_schema.sql
-      #    psql -h localhost -U poptape_auth_test password=${{ secrets.TESTDB_PASSWORD }} -c '\dt'
 
       - name: Test with pytest
         run: |
