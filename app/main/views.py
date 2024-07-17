@@ -144,27 +144,35 @@ def get_items_by_user(public_id, request):
     try:
         starting_id = mongo.db.items.find({ 'details.public_id': public_id }).sort('_id', ASCENDING)
         #starting_id = mongo.db.items.find({ 'details.public_id': public_id }).sort('created', ASCENDING)
-        results_count = starting_id.count()
-    except:
-        return jsonify({ 'message': 'There\'s a problem with your arguments or mongo or both or something else ;)'}), 400
+        results_count = mongo.db.items.count_documents({ 'details.public_id': public_id })
+    except Exception as e:
+        app.logger.error("Error: [%s]", e)
+        return jsonify({ 'message': 'There\'s a problem with your arguments or the db or both or something else ;)'}), 400
 
     if results_count == 0:
         return jsonify({ 'message': 'Nowt here chap'}), 404
 
     if results_count <= offset:
+        app.logger.info("WOOOOOOP 2")
         return jsonify({ 'message': 'offset is too big'}), 400
 
     if offset < 0:
+        app.logger.info("WOOOOOOP 3")
         return jsonify({ 'message': 'offset is negative'}), 400
 
     last_id = starting_id[offset]['_id']
 
     items = []
+    items_count = 0
     try:
         items = mongo.db.items.find({'$and': [{'_id': { '$gte': last_id}},
                                               {'details.public_id': public_id}]}).sort('_id', ASCENDING).limit(limit)
                                               #{'details.public_id': public_id}]}).sort('created', ASCENDING).limit(limit)
-    except:
+        #items_count = mongo.db.items.count_documents({'$and': [{'_id': { '$gte': last_id}},
+        #                                      {'details.public_id': public_id}]}).limit(limit)
+    except Exception as e:
+        app.logger.info("WOOOOOOP 4")
+        app.logger.error("Error [%s]", e)
         return jsonify({ 'message': 'There\'s a problem with your arguments or planets are misaligned. try sacrificing a goat or something...'}), 400
 
     output = []
@@ -176,16 +184,17 @@ def get_items_by_user(public_id, request):
         del item['details']
         item.update(details)
         output.append(item)
+        items_count = items_count + 1
 
     url_offset_next = offset+limit
     url_offset_prev = offset-limit
     if url_offset_prev < 0:
          url_offset_prev = 0
 
-    if url_offset_next > items.count():
+    if url_offset_next > items_count:
         next_url = None    
 
-    return_data = { 'items': output }
+    return_data = {'items': output}
 
     if url_offset_next < results_count:
         next_url = '/items?limit='+str(limit)+'&offset='+str(url_offset_next)+'&sort='+sort

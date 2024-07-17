@@ -5,7 +5,7 @@ import uuid
 
 from mock import patch
 from functools import wraps
-from .fixtures import getPublicID, exceptionFactory
+from .fixtures import getPublicID, getSpecificPublicID
 from flask import jsonify
 import datetime
 # import uuid
@@ -23,7 +23,7 @@ def mock_dec(access_level, request):
 
             if not token:
                 return jsonify({'message': 'Naughty one!'}), 401
-            pub_id = getPublicID()
+            pub_id = getSpecificPublicID()
             return f(pub_id, request, *args, **kwargs)
 
         return decorated
@@ -228,6 +228,20 @@ class MyTest(FlaskTestCase):
                             'message': 'Check ya inputs mate.'}
         self.assertDictEqual(returned_message, expected_message)
         self.assertEqual(response.status_code, 400)
+
+    def test_get_items_by_user(self):
+        test_data = []
+        for x in range(5):
+            if x != 4:
+                item_id, data = createItem(name="name "+str(x), public_id=getSpecificPublicID())
+            else:
+                item_id, data = createItem(name="name "+str(x), public_id=getPublicID())
+            test_data.append({"item_id": item_id, "data": data})
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        response = self.client.get('/items', headers=headers)
+        self.assertEqual(response.status_code, 200)
+        returned_data = response.json
+        self.assertEqual(len(returned_data.get('items')), 4)
 
     def test_create_item_fail_name_too_short(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
