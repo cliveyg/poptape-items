@@ -163,12 +163,16 @@ def get_items_by_user(public_id, request):
     last_id = starting_id[offset]['_id']
 
     items = []
+    items_count = 0
     try:
         items = mongo.db.items.find({'$and': [{'_id': { '$gte': last_id}},
                                               {'details.public_id': public_id}]}).sort('_id', ASCENDING).limit(limit)
                                               #{'details.public_id': public_id}]}).sort('created', ASCENDING).limit(limit)
-    except:
+        items_count = mongo.db.items.count_documents({'$and': [{'_id': { '$gte': last_id}},
+                                              {'details.public_id': public_id}]}).limit(limit)
+    except Exception as e:
         app.logger.info("WOOOOOOP 4")
+        app.logger.error("Error [%s]", e)
         return jsonify({ 'message': 'There\'s a problem with your arguments or planets are misaligned. try sacrificing a goat or something...'}), 400
 
     output = []
@@ -186,10 +190,10 @@ def get_items_by_user(public_id, request):
     if url_offset_prev < 0:
          url_offset_prev = 0
 
-    if url_offset_next > len(items):
+    if url_offset_next > items_count:
         next_url = None    
 
-    return_data = { 'items': output }
+    return_data = {'items': output}
 
     if url_offset_next < results_count:
         next_url = '/items?limit='+str(limit)+'&offset='+str(url_offset_next)+'&sort='+sort
