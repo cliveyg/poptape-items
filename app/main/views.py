@@ -146,15 +146,18 @@ def get_items_by_user(public_id, request):
         #starting_id = mongo.db.items.find({ 'details.public_id': public_id }).sort('created', ASCENDING)
         results_count = starting_id.count()
     except:
+        app.logger.info("WOOOOOOP 1")
         return jsonify({ 'message': 'There\'s a problem with your arguments or mongo or both or something else ;)'}), 400
 
     if results_count == 0:
         return jsonify({ 'message': 'Nowt here chap'}), 404
 
     if results_count <= offset:
+        app.logger.info("WOOOOOOP 2")
         return jsonify({ 'message': 'offset is too big'}), 400
 
     if offset < 0:
+        app.logger.info("WOOOOOOP 3")
         return jsonify({ 'message': 'offset is negative'}), 400
 
     last_id = starting_id[offset]['_id']
@@ -165,6 +168,7 @@ def get_items_by_user(public_id, request):
                                               {'details.public_id': public_id}]}).sort('_id', ASCENDING).limit(limit)
                                               #{'details.public_id': public_id}]}).sort('created', ASCENDING).limit(limit)
     except:
+        app.logger.info("WOOOOOOP 4")
         return jsonify({ 'message': 'There\'s a problem with your arguments or planets are misaligned. try sacrificing a goat or something...'}), 400
 
     output = []
