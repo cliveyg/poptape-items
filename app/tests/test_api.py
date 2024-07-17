@@ -262,6 +262,17 @@ class MyTest(FlaskTestCase):
 
         self.assertEqual(returned_data.get('next_url'), "/items?limit=5&offset=5&sort=id_asc")
 
+        # call again so to obtain page 2
+        response2 = self.client.get('/items?limit=5&offset=5&sort=id_asc', headers=headers)
+        self.assertEqual(response2.status_code, 200)
+        returned_data2 = response2.json
+        self.assertEqual(len(returned_data2.get('items')), 3)
+
+        for item in returned_data2.get('items'):
+            self.assertEqual(item.get('public_id'), getSpecificPublicID())
+
+        self.assertEqual(returned_data2.get('prev_url'), "/items?limit=5&offset=5&sort=id_asc")
+
     def test_create_item_fail_name_too_short(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         create_json = {'name': 'my te',
