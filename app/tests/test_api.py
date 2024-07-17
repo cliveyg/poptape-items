@@ -371,12 +371,6 @@ class MyTest(FlaskTestCase):
                 data['modified'] = str_date + "GMT"
                 sofa_data.append(data)
 
-
-        self.app.logger.info("0-0-0-0-0-0-0-0-0-00-0-0-0-0-0-0-0-0-0-0-0")
-        self.app.logger.info("LEN OF SOFA DATA IS %d", len(sofa_data))
-        self.app.logger.info("SOFA DATA IS %s", str(sofa_data))
-
-
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         response = self.client.get('/items/cat/sofas-new:881', headers=headers)
         self.assertEqual(response.status_code, 200)
@@ -385,15 +379,16 @@ class MyTest(FlaskTestCase):
         sorted_returned_items = sorted(returned_data.get('items'), key=lambda d: d['item_id'])
         sorted_sofa_data = sorted(sofa_data, key=lambda d: d['item_id'])
 
-        self.app.logger.info("0-0-0-0-0-0-0-0-0-0=-=-=-=-=-0-0-0-0-0-0-0-0-0-0-0-0")
-        self.app.logger.info("Len of returned items [%d]", len(returned_data.get('items')))
-        self.app.logger.info("Returned items %s", returned_data.get('items'))
-        self.app.logger.info("SORTED RET items %s", returned_data.get('items'))
-
         for item in sorted_returned_items:
             self.assertEqual(item.get('category'), "sofas-new:881")
 
         for x in range(0, 2):
             self.assertDictEqual(sorted_returned_items[x], sorted_sofa_data[x])
 
-        # self.assertListEqual(sorted_returned_items, sorted_sofa_data)
+    def test_get_items_by_category_fail_bad_cat(self):
+        create_item(name="fred astairmaster", category="stairlifts:8009")
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        response = self.client.get('/items/cat/stairlifts:800b', headers=headers)
+        self.assertEqual(response.status_code, 400)
+        returned_data = response.json
+        self.assertEqual(returned_data.get('message'), "Invalid category")
