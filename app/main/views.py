@@ -168,8 +168,8 @@ def get_items_by_user(public_id, request):
         items = mongo.db.items.find({'$and': [{'_id': { '$gte': last_id}},
                                               {'details.public_id': public_id}]}).sort('_id', ASCENDING).limit(limit)
                                               #{'details.public_id': public_id}]}).sort('created', ASCENDING).limit(limit)
-        items_count = mongo.db.items.count_documents({'$and': [{'_id': { '$gte': last_id}},
-                                              {'details.public_id': public_id}]}).limit(limit)
+        #items_count = mongo.db.items.count_documents({'$and': [{'_id': { '$gte': last_id}},
+        #                                      {'details.public_id': public_id}]}).limit(limit)
     except Exception as e:
         app.logger.info("WOOOOOOP 4")
         app.logger.error("Error [%s]", e)
@@ -184,6 +184,7 @@ def get_items_by_user(public_id, request):
         del item['details']
         item.update(details)
         output.append(item)
+        items_count = items_count + 1
 
     url_offset_next = offset+limit
     url_offset_prev = offset-limit
