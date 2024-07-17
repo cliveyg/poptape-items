@@ -132,32 +132,33 @@ def get_items_by_user(public_id, request):
     offset, sort = 0, 'id_asc'
     limit = int(app.config['PAGE_LIMIT'])
 
-    if 'offset' in request.args:
-        offset = int(request.args['offset'])
-    if 'limit' in request.args:
-        limit = int(request.args['limit'])
-    if 'sort' in request.args:
-        sort = request.args['sort']
+    try:
+        if 'offset' in request.args:
+            offset = int(request.args['offset'])
+        if 'limit' in request.args:
+            limit = int(request.args['limit'])
+        if 'sort' in request.args:
+            sort = request.args['sort']
+    except Exception as e:
+        app.logger.error("Error: [%s]", e)
+        return jsonify({'message': 'Problem with your args'}), 400
 
     starting_id = None
     results_count = 0
     try:
         starting_id = mongo.db.items.find({ 'details.public_id': public_id }).sort('_id', ASCENDING)
-        #starting_id = mongo.db.items.find({ 'details.public_id': public_id }).sort('created', ASCENDING)
         results_count = mongo.db.items.count_documents({ 'details.public_id': public_id })
     except Exception as e:
         app.logger.error("Error: [%s]", e)
         return jsonify({ 'message': 'There\'s a problem with your arguments or the db or both or something else ;)'}), 400
 
     if results_count == 0:
-        return jsonify({ 'message': 'Nowt here chap'}), 404
+        return jsonify({ 'message': 'Nowt ere chap'}), 404
 
     if results_count <= offset:
-        app.logger.info("WOOOOOOP 2")
         return jsonify({ 'message': 'offset is too big'}), 400
 
     if offset < 0:
-        app.logger.info("WOOOOOOP 3")
         return jsonify({ 'message': 'offset is negative'}), 400
 
     last_id = starting_id[offset]['_id']
@@ -167,11 +168,7 @@ def get_items_by_user(public_id, request):
     try:
         items = mongo.db.items.find({'$and': [{'_id': { '$gte': last_id}},
                                               {'details.public_id': public_id}]}).sort('_id', ASCENDING).limit(limit)
-                                              #{'details.public_id': public_id}]}).sort('created', ASCENDING).limit(limit)
-        #items_count = mongo.db.items.count_documents({'$and': [{'_id': { '$gte': last_id}},
-        #                                      {'details.public_id': public_id}]}).limit(limit)
     except Exception as e:
-        app.logger.info("WOOOOOOP 4")
         app.logger.error("Error [%s]", e)
         return jsonify({ 'message': 'There\'s a problem with your arguments or planets are misaligned. try sacrificing a goat or something...'}), 400
 
