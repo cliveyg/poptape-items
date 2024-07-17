@@ -186,7 +186,7 @@ def get_items_by_user(public_id, request):
     if url_offset_prev < 0:
          url_offset_prev = 0
 
-    if url_offset_next > items.count():
+    if url_offset_next > len(items):
         next_url = None    
 
     return_data = { 'items': output }
