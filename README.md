@@ -1,5 +1,5 @@
 # poptape-items
-![All unit tests pass](https://github.com/cliveyg/poptape-items/actions/workflows/unit-test.yml/badge.svg) ![Tests passed](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/cliveyg/1c36226cfbdf2ae7928d01649ab54fc3/raw/42377c0f349675aed1675d066c87698081785b04/poptape-items-junit-tests.json&label=Tests) ![Test coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/cliveyg/1c36226cfbdf2ae7928d01649ab54fc3/raw/42377c0f349675aed1675d066c87698081785b04/poptape-items-cobertura-coverage.json&label=Test%20Coverage)
+![All unit tests pass](https://github.com/cliveyg/poptape-items/actions/workflows/unit-test.yml/badge.svg) ![Tests passed](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/cliveyg/1c36226cfbdf2ae7928d01649ab54fc3/raw/3fd6de98095312a4f469475d7e01ac74fb34d701/poptape-items-junit-tests.json&label=Tests) ![Test coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/cliveyg/1c36226cfbdf2ae7928d01649ab54fc3/raw/3fd6de98095312a4f469475d7e01ac74fb34d701/poptape-items-cobertura-coverage.json&label=Test%20coverage)
 
 Microservice to perform CRUD operations on auction items.
 
