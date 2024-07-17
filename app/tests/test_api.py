@@ -363,12 +363,12 @@ class MyTest(FlaskTestCase):
                 item_id, data = create_item(name="name " + str(x), category="sofas-new:881")
                 test_data.append({"item_id": item_id, "data": data})
                 data["item_id"] = item_id
-                str_date = data.get('created').strftime('%a, %d %b %Y %H:%M:%S %Z')
+                str_date = data.get('created').strftime('%a, %d %b %Y %H:%M:%S ')
                 del data['created']
-                data['created'] = str_date
-                str_date = data.get('modified').strftime('%a, %d %b %Y %H:%M:%S %Z')
+                data['created'] = str_date + "GMT"
+                str_date = data.get('modified').strftime('%a, %d %b %Y %H:%M:%S ')
                 del data['modified']
-                data['modified'] = str_date
+                data['modified'] = str_date + "GMT"
                 sofa_data.append(data)
 
 
