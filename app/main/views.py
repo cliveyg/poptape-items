@@ -209,7 +209,7 @@ def get_items_by_user(public_id, request):
 def get_items_by_category(category):
 
     # basic data sanitation checks for category in format like 'cars:2000'
-    if not re.search("^[a-z]{1,20}:[0-9]{2,5}$",category):
+    if not re.search("^[a-z0-9_-]{1,20}:[0-9]{2,5}$",category):
         return jsonify({ 'message': 'Invalid category'}), 400 
     items = []
 

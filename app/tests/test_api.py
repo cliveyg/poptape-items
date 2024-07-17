@@ -53,7 +53,7 @@ def is_valid_uuid(uuid_to_test, version=4):
 def createItem(**kwargs):
     data = {'name': 'my test item 1',
             'description': 'blah lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-            'category': 'consoles-vintage',
+            'category': 'consoles-vintage:3341',
             'yarp': 'narp',
             'public_id': getPublicID(),
             'created': datetime.datetime.utcnow(),
@@ -348,3 +348,23 @@ class MyTest(FlaskTestCase):
         self.assertEqual(response.status_code, 400)
         returned_data = response.json
         self.assertEqual(returned_data.get('error'), "'category' is a required property")
+
+    def test_get_items_by_category_ok(self):
+        test_data = []
+        for x in range(1,7):
+            if x % 2 == 0:
+                item_id, data = createItem(name="name "+str(x), category="fridges-old:1677")
+            else:
+                item_id, data = createItem(name="name "+str(x), category="sofas-new:881")
+            test_data.append({"item_id": item_id, "data": data})
+
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        response = self.client.get('/items/cat/sofas-new:881', headers=headers)
+        self.assertEqual(response.status_code, 200)
+        returned_data = response.json
+        self.assertEqual(len(returned_data.get('items')), 3)
+
+        for item in returned_data.get('items'):
+            self.assertEqual(item.get('category'), "sofas-new:881")
+
+
