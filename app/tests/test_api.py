@@ -410,6 +410,7 @@ class MyTest(FlaskTestCase):
         data_to_edit = response.json
 
         data_to_edit['name'] = "edited name"
+        self.app.logger.info("DATA TO RETURN TO DB %s", data_to_edit)
         edit_response = self.client.put('/items/'+item_id, json=data_to_edit, headers=headers)
         self.assertEqual(edit_response.status_code, 200)
 
