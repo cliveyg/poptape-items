@@ -267,6 +267,7 @@ def edit_item(public_id, request, item_id):
                               upsert=False)
     except Exception as e:
         app.logger.error("Error editing item [%s]", e)
+        return jsonify({'message': 'Unable to save item to db'}), 500
 
     return jsonify(data), 200
 
