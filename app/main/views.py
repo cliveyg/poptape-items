@@ -218,12 +218,12 @@ def get_items_by_category(category):
                                           { "$sample": { "size": 20 } }])
     except Exception as e:
         app.logger.info(e)
-        return jsonify({ 'message': 'There\'s a problem with your arguments or mongo or both or something else ;)'}), 400
+        return jsonify({'message': 'There\'s a problem with your arguments or mongo or both or something else ;)'}), 400
 
     items = list(results)
 
     if len(items) == 0:
-        return jsonify({ 'message': 'Nowt in that category lass'}), 404
+        return jsonify({'message': 'Nowt in that category lass'}), 404
 
     output = []
     for item in items:
