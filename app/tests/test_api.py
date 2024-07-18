@@ -392,3 +392,11 @@ class MyTest(FlaskTestCase):
         self.assertEqual(response.status_code, 400)
         returned_data = response.json
         self.assertEqual(returned_data.get('message'), "Invalid category")
+
+    def test_get_items_by_category_404_no_items_with_cat(self):
+        create_item(name="fred astairmaster", category="stairlifts:8009")
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        response = self.client.get('/items/cat/skateboards:6765', headers=headers)
+        self.assertEqual(response.status_code, 404)
+        returned_data = response.json
+        self.assertEqual(returned_data.get('message'), "Nowt in that category lass")
