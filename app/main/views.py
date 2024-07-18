@@ -256,7 +256,7 @@ def edit_item(public_id, request, item_id):
         return jsonify({'message': 'Check ya inputs mate.', 'error': err.message}), 400
 
     #TODO: pull original data to get create date. all other data will be 'wiped' 
-    orig_rec = _return_document(item_id)
+    orig_rec = _return_document(str(item_id))
 
     if not isinstance(orig_rec, dict):
         return jsonify({'message': 'Item not found'}), 404
