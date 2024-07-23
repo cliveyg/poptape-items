@@ -263,7 +263,7 @@ def edit_item(public_id, request, item_id):
         return jsonify({'message': 'Item not found'}), 404
 
     data['created'] = orig_rec['created']
-    explicit_binary_public_id = Binary.from_uuid(uuid.UUID(public_id), UuidRepresentation.STANDARD)
+    explicit_binary_public_id = Binary.from_uuid(uuid.UUID(public_id), 4)
     data['public_id'] = explicit_binary_public_id
     data['modified'] = datetime.datetime.utcnow()
 
