@@ -266,9 +266,9 @@ def edit_item(public_id, request, item_id):
     data['modified'] = datetime.datetime.utcnow()
 
     try:
-        mongo.db.items.update({'_id': item_id },
-                              {'$set': {"details": data }},
-                              upsert=False)
+        mongo.db.items.update_one({'_id': item_id },
+                                  {'$set': {"details": data }},
+                                  upsert=False)
     except Exception as e:
         app.logger.error("Error editing item [%s]", e)
         return jsonify({'message': 'Unable to save item to db'}), 500
