@@ -417,3 +417,9 @@ class MyTest(FlaskTestCase):
         self.assertEqual(response3.status_code, 200)
         returned_data = response3.json
         self.assertEqual(returned_data.get('name'), "edited name")
+
+    def test_delete_item_ok(self):
+        item_id, data = create_item(name="name 1", public_id=getPublicID())
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        response = self.client.delete('/items/'+item_id, headers=headers)
+        self.assertEqual(response.status_code, 204)

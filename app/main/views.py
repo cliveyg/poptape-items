@@ -292,14 +292,16 @@ def delete_item(public_id, request, item_id):
     app.logger.info(item_id)
     item_id = str(item_id)
 
-    #result = mongo.db[public_id].find_one({ '_id': item_id })
-    #app.logger.info(result)
-    del_result = mongo.db.items.delete_one({'$and': [{'_id': item_id}, 
-                                                     {'public_id': public_id}]})
+    try:
+        del_result = mongo.db.items.delete_one({'$and': [{'_id': str(item_id)},
+                                                         {'public_id': public_id}]})
+    except Exception as e:
+        app.logger.error(e)
+        return jsonify({'message': 'Unable to delete item'}), 500
 
     app.logger.info(del_result.deleted_count)
 
-    return jsonify({}), 204
+    return jsonify({'deleted_count': del_result.deleted_count}), 204
 
 # --------------------------------------------------------------------------- #
 # system routes
