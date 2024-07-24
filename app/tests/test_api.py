@@ -361,7 +361,7 @@ class MyTest(FlaskTestCase):
         response = self.client.post('/items', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 400)
         returned_data = response.json
-        self.assertEqual(returned_data.get('message'), "Check ya inputs mate. Yer not valid, Jason")
+        self.assertEqual(returned_data.get('message'), "Check ya inputs mate.")
 
     def test_get_items_by_category_ok(self):
         test_data = []

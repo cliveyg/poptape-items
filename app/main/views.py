@@ -41,7 +41,7 @@ def create_item(public_id, request):
     try:
         assert_valid_schema(data, 'item')
     except JsonValidationError as err:
-        return jsonify({ 'message': 'Check ya inputs mate.', 'error': err.message }), 400    
+        return jsonify({'message': 'Check ya inputs matey.', 'error': err.message}), 400
 
     # we put every thing in a single collection of items and will index on _id and public_id
     item_id = str(uuid.uuid4())
