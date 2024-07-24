@@ -158,8 +158,8 @@ class MyTest(FlaskTestCase):
     def test_fetch_item_fail_404(self):
         create_item(name="name 1")
         headers = {'Content-type': 'application/json'}
-        not_real_item_id = uuid.uuid4()
-        response = self.client.get('/items/'+str(not_real_item_id), headers=headers)
+        not_real_item_id = str(uuid.uuid4())
+        response = self.client.get('/items/'+not_real_item_id, headers=headers)
         self.assertEqual(response.status_code, 404)
         returned_data = response.json
         self.assertEqual(returned_data.get('message'), 'Could not find the item ['+not_real_item_id+']')
