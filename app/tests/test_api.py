@@ -464,7 +464,7 @@ class MyTest(FlaskTestCase):
         self.assertEqual(edit_response.status_code, 400)
         returned_data = edit_response.json
         self.assertEqual(returned_data.get('message'), "Check ya inputs mate.")
-        self.assertEqual(returned_data.get('error'), "Check ya inputs mate.")
+        self.assertEqual(returned_data.get('error'), "'description' is a required property")
 
     def test_edit_item_fail_wrong_id(self):
         item_id, data = create_item(name="name 1", public_id=getPublicID())
