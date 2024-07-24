@@ -11,6 +11,8 @@ from pymongo import ASCENDING, DESCENDING
 import uuid
 import datetime
 import re
+# from bson.binary import Binary, UuidRepresentation
+# from bson.objectid import ObjectId
 
 # --------------------------------------------------------------------------- #
 
@@ -46,8 +48,11 @@ def create_item(public_id, request):
     data['public_id'] = public_id
     data['created'] = datetime.datetime.utcnow()
     data['modified'] = datetime.datetime.utcnow()
-    result = mongo.db.items.insert_one({"_id" : item_id, "details": data})
-    #app.logger.info(result)
+    try:
+        mongo.db.items.insert_one({"_id" : item_id, "details": data})
+    except Exception as e:
+        app.logger.error(e)
+        return jsonify({'message': 'unable to insert'}, 500)
 
     token = request.headers.get('x-access-token')
 
@@ -90,7 +95,7 @@ def fetch_items():
         results = mongo.db.items.find({ '_id': { '$in': data['item_ids'] }});
     except Exception as e:
         app.logger.warning("Error fetching doc [%s]", str(e))
-        return jsonify({ 'message': 'something went bang, sorry' }), 500
+        return jsonify({'message': 'something went bang, sorry'}), 500
 
     output = []
 
@@ -116,10 +121,10 @@ def get_item(item_id):
 
     record = _return_document(item_id)
 
-    if isinstance(record,dict):
+    if isinstance(record, dict):
         return jsonify(record), 200
 
-    mess = { 'message': 'Could not find the item ['+item_id+']' }
+    mess = {'message': 'Could not find the item ['+item_id+']'}
 
     return jsonify(mess), 404
 
@@ -253,17 +258,27 @@ def edit_item(public_id, request, item_id):
     try:
         assert_valid_schema(data,'item')
     except JsonValidationError as err:
-        return jsonify({ 'message': 'Check ya inputs mate.', 'error': err.message }), 400
+        return jsonify({'message': 'Check ya inputs mate.', 'error': err.message}), 400
 
     #TODO: pull original data to get create date. all other data will be 'wiped' 
-    orig_rec = _return_document(item_id)
-    data['created'] = orig_rec['created'] 
+    orig_rec = _return_document(str(item_id))
+
+    app.logger.info("ORIGINAL RECORD IS %s", orig_rec)
+
+    if not isinstance(orig_rec, dict):
+        return jsonify({'message': 'Item not found'}), 404
+
+    del data['created']
     data['public_id'] = public_id
     data['modified'] = datetime.datetime.utcnow()
 
-    mongo.db.items.update({ '_id': item_id },
-                          { '$set': { "details": data } },
-                          upsert=False)
+    try:
+        mongo.db.items.update_one({'_id': str(item_id)},
+                                  {'$set': {"details": data}},
+                                  upsert=False)
+    except Exception as e:
+        app.logger.error("Error editing item [%s]", e)
+        return jsonify({'message': 'Unable to save item to db'}), 500
 
     return jsonify(data), 200
 
