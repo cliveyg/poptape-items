@@ -11,7 +11,8 @@ from pymongo import ASCENDING, DESCENDING
 import uuid
 import datetime
 import re
-from bson.binary import Binary, UuidRepresentation
+# from bson.binary import Binary, UuidRepresentation
+from bson.objectid import ObjectId
 
 # --------------------------------------------------------------------------- #
 
@@ -264,13 +265,14 @@ def edit_item(public_id, request, item_id):
     if not isinstance(orig_rec, dict):
         return jsonify({'message': 'Item not found'}), 404
 
-    data['created'] = orig_rec['created']
+    #data['created'] = orig_rec['created']
+    del data['created']
     #explicit_binary_public_id = Binary.from_uuid(uuid.UUID(public_id), 4)
     #data['public_id'] = public_id
     data['modified'] = datetime.datetime.utcnow()
 
     try:
-        mongo.db.items.update_one({'_id': item_id},
+        mongo.db.items.update_one({'_id': ObjectId(item_id)},
                                   {'$set': {"details": data}},
                                   upsert=False)
     except Exception as e:
