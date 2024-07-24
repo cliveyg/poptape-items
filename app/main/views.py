@@ -28,20 +28,17 @@ def only_json():
 @require_access_level(10, request)
 def create_item(public_id, request):
    
-    #TODO: items can have many fields - hence the choice of a nosql datastore
+    # TODO: items can have many fields - hence the choice of a nosql datastore
     # need to lock this down a bit more - at the mo we only insist on item_id
     # and description
     # check input is valid json
-    try:
-        data = request.get_json()
-    except:
-        return jsonify({ 'message': 'Check ya inputs mate. Yer not valid, Jason'}), 400
 
     # validate input against json schemas
+    data = request.get_json()
     try:
         assert_valid_schema(data, 'item')
     except JsonValidationError as err:
-        return jsonify({ 'message': 'Check ya inputs mate.', 'error': err.message }), 400    
+        return jsonify({'message': 'Check ya inputs mate.', 'error': err.message}), 400
 
     # we put every thing in a single collection of items and will index on _id and public_id
     item_id = str(uuid.uuid4())
