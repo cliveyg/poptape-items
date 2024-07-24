@@ -52,7 +52,7 @@ def create_item(public_id, request):
         mongo.db.items.insert_one({"_id" : item_id, "details": data})
     except Exception as e:
         app.logger.error(e)
-        return jsonify({'message': 'unable to insert', 'error': e}, 500)
+        return jsonify({'message': 'unable to insert'}, 500)
 
     token = request.headers.get('x-access-token')
 
@@ -95,7 +95,7 @@ def fetch_items():
         results = mongo.db.items.find({ '_id': { '$in': data['item_ids'] }});
     except Exception as e:
         app.logger.warning("Error fetching doc [%s]", str(e))
-        return jsonify({ 'message': 'something went bang, sorry' }), 500
+        return jsonify({'message': 'something went bang, sorry'}), 500
 
     output = []
 
@@ -268,10 +268,8 @@ def edit_item(public_id, request, item_id):
     if not isinstance(orig_rec, dict):
         return jsonify({'message': 'Item not found'}), 404
 
-    #data['created'] = orig_rec['created']
     del data['created']
-    #explicit_binary_public_id = Binary.from_uuid(uuid.UUID(public_id), 4)
-    #data['public_id'] = public_id
+    data['public_id'] = public_id
     data['modified'] = datetime.datetime.utcnow()
 
     try:
