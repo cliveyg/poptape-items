@@ -259,12 +259,14 @@ def edit_item(public_id, request, item_id):
     #TODO: pull original data to get create date. all other data will be 'wiped' 
     orig_rec = _return_document(str(item_id))
 
+    app.logger.info("ORIGINAL RECORD IS %s", orig_rec)
+
     if not isinstance(orig_rec, dict):
         return jsonify({'message': 'Item not found'}), 404
 
     data['created'] = orig_rec['created']
-    explicit_binary_public_id = Binary.from_uuid(uuid.UUID(public_id), 4)
-    data['public_id'] = explicit_binary_public_id
+    #explicit_binary_public_id = Binary.from_uuid(uuid.UUID(public_id), 4)
+    #data['public_id'] = public_id
     data['modified'] = datetime.datetime.utcnow()
 
     try:
