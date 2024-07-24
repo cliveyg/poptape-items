@@ -155,6 +155,14 @@ class MyTest(FlaskTestCase):
         self.assertEqual(data.get('yarp'), returned_data.get('yarp'))
         self.assertEqual(data.get('category'), returned_data.get('category'))
 
+    def test_fetch_item_fail_404(self):
+        item_id, data = create_item(name="name 1")
+        headers = {'Content-type': 'application/json'}
+        response = self.client.get('/items/'+str(uuid.uuid4()), headers=headers)
+        self.assertEqual(response.status_code, 404)
+        returned_data = response.json
+        self.assertEqual(returned_data.get('message'), 'Could not find the item ['+item_id+']')
+
     def test_bulk_fetch_items_ok(self):
 
         item1_id, data1 = create_item(name="name 1", category="cars-new")

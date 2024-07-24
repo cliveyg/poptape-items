@@ -88,7 +88,7 @@ def fetch_items():
     try:
         results = mongo.db.items.find({'_id': {'$in': data['item_ids']}})
     except Exception as e:
-        app.logger.warning("Error fetching doc [%s]", str(e))
+        app.logger.error("Error fetching doc [%s]", str(e))
         return jsonify({'message': 'something went bang, sorry'}), 500
 
     output = []
