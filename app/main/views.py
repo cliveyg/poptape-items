@@ -12,7 +12,7 @@ import uuid
 import datetime
 import re
 # from bson.binary import Binary, UuidRepresentation
-from bson.objectid import ObjectId
+# from bson.objectid import ObjectId
 
 # --------------------------------------------------------------------------- #
 
@@ -48,8 +48,11 @@ def create_item(public_id, request):
     data['public_id'] = public_id
     data['created'] = datetime.datetime.utcnow()
     data['modified'] = datetime.datetime.utcnow()
-    result = mongo.db.items.insert_one({"_id" : item_id, "details": data})
-    #app.logger.info(result)
+    try:
+        mongo.db.items.insert_one({"_id" : item_id, "details": data})
+    except Exception as e:
+        app.logger.error(e)
+        return jsonify({'message': 'unable to insert', 'error': e}, 500)
 
     token = request.headers.get('x-access-token')
 
@@ -272,7 +275,7 @@ def edit_item(public_id, request, item_id):
     data['modified'] = datetime.datetime.utcnow()
 
     try:
-        mongo.db.items.update_one({'_id': ObjectId(item_id)},
+        mongo.db.items.update_one({'_id': str(item_id)},
                                   {'$set': {"details": data}},
                                   upsert=False)
     except Exception as e:
