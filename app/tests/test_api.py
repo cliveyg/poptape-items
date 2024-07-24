@@ -304,7 +304,7 @@ class MyTest(FlaskTestCase):
         response = self.client.get('/items?limit=5&offset=-9&sort=id_asc', headers=headers)
         returned_data = response.json
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(returned_data.get('message'), "offset is negative")
+        self.assertEqual(returned_data.get('message'), "offset cannot be negative")
 
     def test_get_items_by_user_return_404(self):
         create_item()
