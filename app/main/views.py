@@ -154,11 +154,11 @@ def get_items_by_user(public_id, request):
         app.logger.error("Error: [%s]", e)
         return jsonify({'message': 'There\'s a problem with your arguments, the db, both or something else ;)'}), 400
 
-    if results_count == 0:
-        return jsonify({'message': 'Nowt ere chap'}), 404
-
     if results_count <= offset:
         return jsonify({'message': 'offset is too big'}), 400
+
+    if results_count == 0:
+        return jsonify({'message': 'Nowt ere chap'}), 404
 
     last_id = starting_id[offset]['_id']
 
