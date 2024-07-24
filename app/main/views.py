@@ -35,7 +35,7 @@ def create_item(public_id, request):
     try:
         data = request.get_json()
     except:
-        return jsonify({ 'message': 'Check ya inputs mate. Yer not valid, Jason'}), 400
+        return jsonify({'message': 'Check ya inputs mate. Yer not valid, Jason'}), 400
 
     # validate input against json schemas
     try:
