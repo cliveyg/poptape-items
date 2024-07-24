@@ -280,10 +280,6 @@ def edit_item(public_id, request, item_id):
 @require_access_level(10, request)
 def delete_item(public_id, request, item_id):
 
-    app.logger.info(public_id)
-    app.logger.info(item_id)
-    item_id = str(item_id)
-
     try:
         del_result = mongo.db.items.delete_one({'$and': [{'_id': str(item_id)},
                                                          {'public_id': public_id}]})
@@ -315,7 +311,7 @@ def _return_document(item_id):
     try:
         record = mongo.db.items.find_one({'_id': item_id})
     except Exception as e:
-        app.logger.warning("Error fetching doc [%s]", str(e))
+        app.logger.error("Error fetching doc [%s]", str(e))
         return False 
 
     if record is None:
