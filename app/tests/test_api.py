@@ -478,6 +478,18 @@ class MyTest(FlaskTestCase):
         edit_response = self.client.put('/items/'+item_id, json=data_to_edit, headers=headers)
         self.assertEqual(edit_response.status_code, 401)
 
+    def test_edit_item_fail_item_id_not_found(self):
+        item_id, data = create_item(name="name 1", public_id=getPublicID())
+
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        response = self.client.get('/items/'+item_id, headers=headers)
+        self.assertEqual(response.status_code, 200)
+        data_to_edit = response.json
+
+        data_to_edit['name'] = "edited name"
+        edit_response = self.client.put('/items/'+str(uuid.uuid4()), json=data_to_edit, headers=headers)
+        self.assertEqual(edit_response.status_code, 404)
+
     def test_delete_item_ok(self):
         item_id, data = create_item(name="name 1", public_id=getSpecificPublicID())
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
