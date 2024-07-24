@@ -15,6 +15,7 @@
 !docker-compose.yml
 !.github
 !.github/workflows/unit-test.yml
+!.github/workflows/post-merge-deployment.yml
 !app/
 !items.py
 !manage.py
