@@ -7,14 +7,13 @@ from app.assertions import assert_valid_schema
 from app.decorators import require_access_level
 from app.services import get_s3_urls
 from jsonschema.exceptions import ValidationError as JsonValidationError
-from pymongo import ASCENDING, DESCENDING
+from pymongo import ASCENDING
 import uuid
 import datetime
 import re
-# from bson.binary import Binary, UuidRepresentation
-# from bson.objectid import ObjectId
 
 # --------------------------------------------------------------------------- #
+
 
 # reject any non-json requests
 @bp.before_request
@@ -23,6 +22,7 @@ def only_json():
         abort(400)
 
 # --------------------------------------------------------------------------- #
+
 
 @bp.route('/items', methods=['POST'])
 @require_access_level(10, request)
@@ -34,8 +34,8 @@ def create_item(public_id, request):
     # check input is valid json
 
     # validate input against json schemas
-    data = request.get_json()
     try:
+        data = request.get_json()
         assert_valid_schema(data, 'item')
     except JsonValidationError as err:
         return jsonify({'message': 'Check ya inputs mate.', 'error': err.message}), 400
@@ -46,7 +46,7 @@ def create_item(public_id, request):
     data['created'] = datetime.datetime.utcnow()
     data['modified'] = datetime.datetime.utcnow()
     try:
-        mongo.db.items.insert_one({"_id" : item_id, "details": data})
+        mongo.db.items.insert_one({"_id": item_id, "details": data})
     except Exception as e:
         app.logger.error(e)
         return jsonify({'message': 'unable to insert'}, 500)
@@ -61,35 +61,32 @@ def create_item(public_id, request):
 
     r = get_s3_urls(foto_ids, token)
     s3_urls = []
-    collection_name = 'z'+public_id.replace('-','')
+    collection_name = 'z'+public_id.replace('-', '')
     bucket_url = "https://"+collection_name.lower()+".s3.amazonaws.com/"
 
     if r.status_code == 201:
         aws_data = r.json()
         s3_urls = aws_data.get('aws_urls')
 
-    return jsonify({ 'item_id': item_id,
-                     'bucket_url': bucket_url,
-                     's3_urls': s3_urls }), 201
+    return jsonify({'item_id': item_id,
+                    'bucket_url': bucket_url,
+                    's3_urls': s3_urls}), 201
 
 # --------------------------------------------------------------------------- #
+
 
 @bp.route('/items/bulk/fetch', methods=['POST'])
 def fetch_items():
 
-    try:
-        data = request.get_json()
-    except:
-        return jsonify({ 'message': 'Check ya inputs mate. Yer not valid, Jason'}), 400
-
     # validate input against json schemas
     try:
-        assert_valid_schema(data,'bulk_items')
+        data = request.get_json()
+        assert_valid_schema(data, 'bulk_items')
     except JsonValidationError as err:
-        return jsonify({ 'message': 'Check ya inputs mate.', 'error': err.message }), 400
+        return jsonify({'message': 'Check ya inputs mate.', 'error': err.message}), 400
 
     try:
-        results = mongo.db.items.find({ '_id': { '$in': data['item_ids'] }});
+        results = mongo.db.items.find({'_id': {'$in': data['item_ids']}})
     except Exception as e:
         app.logger.warning("Error fetching doc [%s]", str(e))
         return jsonify({'message': 'something went bang, sorry'}), 500
@@ -104,13 +101,12 @@ def fetch_items():
         item.update(details)
         output.append(item)
 
-    return jsonify({ 'items': output }), 200
+    return jsonify({'items': output}), 200
 
 # --------------------------------------------------------------------------- #
 
+
 @bp.route('/items/<uuid:item_id>', methods=['GET'])
-#@require_access_level(10, request)
-#def get_item(public_id, request, item_id):
 def get_item(item_id):
 
     # every user has their own collection
@@ -126,6 +122,7 @@ def get_item(item_id):
     return jsonify(mess), 404
 
 # --------------------------------------------------------------------------- #
+
 
 @bp.route('/items', methods=['GET'])
 @require_access_level(10, request)
@@ -148,31 +145,31 @@ def get_items_by_user(public_id, request):
     starting_id = None
     results_count = 0
     try:
-        starting_id = mongo.db.items.find({ 'details.public_id': public_id }).sort('_id', ASCENDING)
-        results_count = mongo.db.items.count_documents({ 'details.public_id': public_id })
+        starting_id = mongo.db.items.find({'details.public_id': public_id}).sort('_id', ASCENDING)
+        results_count = mongo.db.items.count_documents({'details.public_id': public_id})
     except Exception as e:
         app.logger.error("Error: [%s]", e)
-        return jsonify({ 'message': 'There\'s a problem with your arguments or the db or both or something else ;)'}), 400
+        return jsonify({'message': 'There\'s a problem with your arguments, the db, both or something else ;)'}), 400
 
     if results_count == 0:
-        return jsonify({ 'message': 'Nowt ere chap'}), 404
+        return jsonify({'message': 'Nowt ere chap'}), 404
 
     if results_count <= offset:
-        return jsonify({ 'message': 'offset is too big'}), 400
+        return jsonify({'message': 'offset is too big'}), 400
 
     if offset < 0:
-        return jsonify({ 'message': 'offset is negative'}), 400
+        return jsonify({'message': 'offset is negative'}), 400
 
     last_id = starting_id[offset]['_id']
 
     items = []
     items_count = 0
     try:
-        items = mongo.db.items.find({'$and': [{'_id': { '$gte': last_id}},
+        items = mongo.db.items.find({'$and': [{'_id': {'$gte': last_id}},
                                               {'details.public_id': public_id}]}).sort('_id', ASCENDING).limit(limit)
     except Exception as e:
         app.logger.error("Error [%s]", e)
-        return jsonify({ 'message': 'There\'s a problem with your arguments or planets are misaligned. try sacrificing a goat or something...'}), 400
+        return jsonify({'message': 'There\'s a problem with your arguments or the planets are misaligned. try sacrificing a goat or something...'}), 400
 
     output = []
 
@@ -188,7 +185,7 @@ def get_items_by_user(public_id, request):
     url_offset_next = offset+limit
     url_offset_prev = offset-limit
     if url_offset_prev < 0:
-         url_offset_prev = 0
+        url_offset_prev = 0
 
     if url_offset_next > items_count:
         next_url = None    
@@ -205,19 +202,21 @@ def get_items_by_user(public_id, request):
 
     return jsonify(return_data), 200
 
-#-----------------------------------------------------------------------------#
+# --------------------------------------------------------------------------- #
 # brings back a random selection of 20 items by category
+
+
 @bp.route('/items/cat/<category>', methods=['GET'])
 def get_items_by_category(category):
 
     # basic data sanitation checks for category in format like 'cars:2000'
-    if not re.search("^[a-z0-9_-]{1,20}:[0-9]{2,5}$",category):
+    if not re.search("^[a-z0-9_-]{1,20}:[0-9]{2,5}$", category):
         return jsonify({'message': 'Invalid category'}), 400
     items = []
 
     try:
-        results = mongo.db.items.aggregate([{ "$match": { "details.category": category } },
-                                          { "$sample": { "size": 20 } }])
+        results = mongo.db.items.aggregate([{"$match": {"details.category": category}},
+                                            {"$sample": {"size": 20}}])
     except Exception as e:
         app.logger.info(e)
         return jsonify({'message': 'There\'s a problem with your arguments or mongo or both or something else ;)'}), 400
@@ -236,28 +235,25 @@ def get_items_by_category(category):
         item.update(details)
         output.append(item)
 
-    return_data = { 'items': output }
+    return_data = {'items': output}
 
     return jsonify(return_data), 200
 
 # -----------------------------------------------------------------------------
 
+
 @bp.route('/items/<uuid:item_id>', methods=['PUT'])
 @require_access_level(10, request)
 def edit_item(public_id, request, item_id):
 
-    try:
-        data = request.get_json()
-    except:
-        return jsonify({ 'message': 'Check ya inputs mate. Yer not valid, Jason'}), 400
-
     # validate input against json schemas
     try:
-        assert_valid_schema(data,'item')
+        data = request.get_json()
+        assert_valid_schema(data, 'item')
     except JsonValidationError as err:
         return jsonify({'message': 'Check ya inputs mate.', 'error': err.message}), 400
 
-    #TODO: pull original data to get create date. all other data will be 'wiped' 
+    # TODO: pull original data to get create date. all other data will be 'wiped'
     orig_rec = _return_document(str(item_id))
 
     app.logger.info("ORIGINAL RECORD IS %s", orig_rec)
@@ -280,6 +276,7 @@ def edit_item(public_id, request, item_id):
     return jsonify(data), 200
 
 # --------------------------------------------------------------------------- #
+
 
 @bp.route('/items/<uuid:item_id>', methods=['DELETE'])
 @require_access_level(10, request)
@@ -304,19 +301,21 @@ def delete_item(public_id, request, item_id):
 # system routes
 # --------------------------------------------------------------------------- #
 
+
 @bp.route('/items/status', methods=['GET'])
 def system_running():
-    return jsonify({ 'message': 'System running...' }), 200
+    return jsonify({'message': 'System running...'}), 200
 
 # --------------------------------------------------------------------------- #
 # debug and helper functions
 # --------------------------------------------------------------------------- #
 
+
 def _return_document(item_id):
 
     record = None
     try:
-        record = mongo.db.items.find_one({ '_id': item_id })
+        record = mongo.db.items.find_one({'_id': item_id})
     except Exception as e:
         app.logger.warning("Error fetching doc [%s]", str(e))
         return False 
@@ -327,7 +326,6 @@ def _return_document(item_id):
     del record['_id']
     item_details = record.get("details")
     item_details['item_id'] = item_id
-    return(item_details)
+    return item_details
 
 # --------------------------------------------------------------------------- #
-

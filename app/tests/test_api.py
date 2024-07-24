@@ -355,8 +355,8 @@ class MyTest(FlaskTestCase):
     def test_create_item_fail_bad_json(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         create_json = {'name': 'my test item',
-                       'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum'}
-        create_json['bad-json'] = '\uD800'
+                       'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
+                       'bad-json': '\uD800'}
 
         response = self.client.post('/items', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 400)
