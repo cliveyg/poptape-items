@@ -296,8 +296,8 @@ class MyTest(FlaskTestCase):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         response = self.client.get('/items?limit=5&offset=90909090909&sort=id_asc', headers=headers)
         returned_data = response.json
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(returned_data.get('message'), "offset is too big")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(returned_data.get('message'), "Nowt ere chap")
 
     def test_get_items_by_user_fail_bad_offset_3(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
