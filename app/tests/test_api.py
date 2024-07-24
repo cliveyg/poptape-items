@@ -155,6 +155,15 @@ class MyTest(FlaskTestCase):
         self.assertEqual(data.get('yarp'), returned_data.get('yarp'))
         self.assertEqual(data.get('category'), returned_data.get('category'))
 
+    def test_fetch_item_fail_404(self):
+        create_item(name="name 1")
+        headers = {'Content-type': 'application/json'}
+        not_real_item_id = str(uuid.uuid4())
+        response = self.client.get('/items/'+not_real_item_id, headers=headers)
+        self.assertEqual(response.status_code, 404)
+        returned_data = response.json
+        self.assertEqual(returned_data.get('message'), 'Could not find the item ['+not_real_item_id+']')
+
     def test_bulk_fetch_items_ok(self):
 
         item1_id, data1 = create_item(name="name 1", category="cars-new")
@@ -276,12 +285,26 @@ class MyTest(FlaskTestCase):
 
         self.assertEqual(returned_data2.get('prev_url'), "/items?limit=5&offset=0&sort=id_asc")
 
-    def test_get_items_by_user_fail_bad_offset(self):
+    def test_get_items_by_user_fail_bad_offset_1(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         response = self.client.get('/items?limit=5&offset=WIBBLE&sort=id_asc', headers=headers)
         returned_data = response.json
         self.assertEqual(response.status_code, 400)
         self.assertEqual(returned_data.get('message'), "Problem with your args")
+
+    def test_get_items_by_user_fail_bad_offset_2(self):
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        response = self.client.get('/items?limit=5&offset=90909090909&sort=id_asc', headers=headers)
+        returned_data = response.json
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(returned_data.get('message'), "Nowt ere chap")
+
+    def test_get_items_by_user_fail_bad_offset_3(self):
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        response = self.client.get('/items?limit=5&offset=-9&sort=id_asc', headers=headers)
+        returned_data = response.json
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(returned_data.get('message'), "offset cannot be negative")
 
     def test_get_items_by_user_return_404(self):
         create_item()
