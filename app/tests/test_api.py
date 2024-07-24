@@ -452,6 +452,20 @@ class MyTest(FlaskTestCase):
         returned_data = response3.json
         self.assertEqual(returned_data.get('name'), "edited name")
 
+    def test_edit_item_fail_json_schema(self):
+        item_id, data = create_item(name="name 1", public_id=getSpecificPublicID())
+
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        response = self.client.get('/items/'+item_id, headers=headers)
+        self.assertEqual(response.status_code, 200)
+        data_to_edit = response.json
+        del data_to_edit['description']
+        edit_response = self.client.put('/items/'+item_id, json=data_to_edit, headers=headers)
+        self.assertEqual(edit_response.status_code, 400)
+        returned_data = edit_response.json
+        self.assertEqual(returned_data.get('message'), "Check ya inputs mate.")
+        self.assertEqual(returned_data.get('error'), "Check ya inputs mate.")
+
     def test_edit_item_fail_wrong_id(self):
         item_id, data = create_item(name="name 1", public_id=getPublicID())
 
