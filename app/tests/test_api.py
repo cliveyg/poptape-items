@@ -285,12 +285,26 @@ class MyTest(FlaskTestCase):
 
         self.assertEqual(returned_data2.get('prev_url'), "/items?limit=5&offset=0&sort=id_asc")
 
-    def test_get_items_by_user_fail_bad_offset(self):
+    def test_get_items_by_user_fail_bad_offset_1(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         response = self.client.get('/items?limit=5&offset=WIBBLE&sort=id_asc', headers=headers)
         returned_data = response.json
         self.assertEqual(response.status_code, 400)
         self.assertEqual(returned_data.get('message'), "Problem with your args")
+
+    def test_get_items_by_user_fail_bad_offset_2(self):
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        response = self.client.get('/items?limit=5&offset=90909090909&sort=id_asc', headers=headers)
+        returned_data = response.json
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(returned_data.get('message'), "offset is too big")
+
+    def test_get_items_by_user_fail_bad_offset_3(self):
+        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+        response = self.client.get('/items?limit=5&offset=-9&sort=id_asc', headers=headers)
+        returned_data = response.json
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(returned_data.get('message'), "offset is negative")
 
     def test_get_items_by_user_return_404(self):
         create_item()
