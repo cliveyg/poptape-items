@@ -256,10 +256,11 @@ def edit_item(public_id, request, item_id):
     # TODO: pull original data to get create date. all other data will be 'wiped'
     orig_rec = _return_document(str(item_id))
 
-    app.logger.info("ORIGINAL RECORD IS %s", orig_rec)
-
     if not isinstance(orig_rec, dict):
         return jsonify({'message': 'Item not found'}), 404
+
+    if public_id != orig_rec.get('public_id'):
+        return jsonify({'message': 'bad bad ting'}), 401
 
     del data['created']
     data['public_id'] = public_id
