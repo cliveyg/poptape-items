@@ -420,15 +420,10 @@ class MyTest(FlaskTestCase):
 
         for x in range(0, 2):
             # removing dates
-            if x == 0:
-                print('==================================')
-                print(sorted_returned_items[x]['created'])
-                print(sorted_sofa_data[x]['created'])
-                print('==================================')
             del sorted_returned_items[x]['created']
             del sorted_returned_items[x]['modified']
             del sorted_sofa_data[x]['created']
-            # del sorted_sofa_data[x]['modified']
+            del sorted_sofa_data[x]['modified']
             self.assertDictEqual(sorted_returned_items[x], sorted_sofa_data[x])
 
     def test_get_items_by_category_fail_bad_cat(self):
