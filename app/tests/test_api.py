@@ -73,7 +73,6 @@ def create_item(**kwargs):
     except Exception as e:
         return e
 
-    data['created'] = item_id
     return item_id, data
 
 
