@@ -53,13 +53,15 @@ def is_valid_uuid(uuid_to_test, version=4):
 
 def create_item(**kwargs):
 
+    datein = datetime.datetime.utcnow()
+
     data = {'name': 'my test item 1',
             'description': 'blah lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
             'category': 'consoles-vintage:3341',
             'yarp': 'narp',
             'public_id': getPublicID(),
-            'created': datetime.datetime.utcnow(),
-            'modified': datetime.datetime.utcnow()}
+            'created': datein,
+            'modified': datein}
     # can override default options here
     for key, value in kwargs.items():
         data[key] = value
@@ -71,6 +73,8 @@ def create_item(**kwargs):
     except Exception as e:
         return e
 
+    data['created'] = datein.isoformat() + "Z"
+    data['modified'] = datein.isoformat() + "Z"
     return item_id, data
 
 
