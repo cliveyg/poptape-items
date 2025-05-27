@@ -73,8 +73,6 @@ def create_item(**kwargs):
     except Exception as e:
         return e
 
-    #data['created'] = datein.isoformat() + "Z"
-    #data['modified'] = datein.isoformat() + "Z"
     return item_id, data
 
 
@@ -402,11 +400,12 @@ class MyTest(FlaskTestCase):
                 test_data.append({"item_id": item_id, "data": data})
                 data["item_id"] = item_id
                 #str_date = data.get('created').strftime('%a, %d %b %Y %H:%M:%S ')
-                #del data['created']
-                #data['created'] = str_date + "GMT"
+                iso_fmt = data.get('created').isoformat()
+                del data['created']
+                data['created'] = iso_fmt
                 #str_date = data.get('modified').strftime('%a, %d %b %Y %H:%M:%S ')
-                #del data['modified']
-                #data['modified'] = str_date + "GMT"
+                del data['modified']
+                data['modified'] = iso_fmt
                 sofa_data.append(data)
 
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
