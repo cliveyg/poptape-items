@@ -73,8 +73,8 @@ def create_item(**kwargs):
     except Exception as e:
         return e
 
-    data['created'] = datein.isoformat() + "Z"
-    data['modified'] = datein.isoformat() + "Z"
+    #data['created'] = datein.isoformat() + "Z"
+    #data['modified'] = datein.isoformat() + "Z"
     return item_id, data
 
 
@@ -401,12 +401,12 @@ class MyTest(FlaskTestCase):
                 item_id, data = create_item(name="name " + str(x), category="sofas-new:881")
                 test_data.append({"item_id": item_id, "data": data})
                 data["item_id"] = item_id
-                str_date = data.get('created').strftime('%a, %d %b %Y %H:%M:%S ')
-                del data['created']
-                data['created'] = str_date + "GMT"
-                str_date = data.get('modified').strftime('%a, %d %b %Y %H:%M:%S ')
-                del data['modified']
-                data['modified'] = str_date + "GMT"
+                #str_date = data.get('created').strftime('%a, %d %b %Y %H:%M:%S ')
+                #del data['created']
+                #data['created'] = str_date + "GMT"
+                #str_date = data.get('modified').strftime('%a, %d %b %Y %H:%M:%S ')
+                #del data['modified']
+                #data['modified'] = str_date + "GMT"
                 sofa_data.append(data)
 
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
