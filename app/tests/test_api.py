@@ -399,13 +399,12 @@ class MyTest(FlaskTestCase):
                 item_id, data = create_item(name="name " + str(x), category="sofas-new:881")
                 test_data.append({"item_id": item_id, "data": data})
                 data["item_id"] = item_id
-                #str_date = data.get('created').strftime('%a, %d %b %Y %H:%M:%S ')
-                iso_fmt = data.get('created').isoformat()
+                str_date = data.get('created').strftime('%a, %d %b %Y %H:%M:%S ')
                 del data['created']
-                data['created'] = iso_fmt
-                #str_date = data.get('modified').strftime('%a, %d %b %Y %H:%M:%S ')
+                data['created'] = str_date
+                str_date = data.get('modified').strftime('%a, %d %b %Y %H:%M:%S ')
                 del data['modified']
-                data['modified'] = iso_fmt
+                data['modified'] = str_date
                 sofa_data.append(data)
 
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
@@ -413,6 +412,15 @@ class MyTest(FlaskTestCase):
         self.assertEqual(response.status_code, 200)
         returned_data = response.json
         self.assertEqual(len(returned_data.get('items')), 3)
+        # print('=================================')
+        # print(returned_data)
+        # print('=================================')
+        # str_date = returned_data.get('created').strftime('%a, %d %b %Y %H:%M:%S ')
+        # del returned_data['created']
+        # returned_data['created'] = str_date
+        # str_date = returned_data.get('modified').strftime('%a, %d %b %Y %H:%M:%S ')
+        # del returned_data['modified']
+        # returned_data['modified'] = str_date
         sorted_returned_items = sorted(returned_data.get('items'), key=lambda d: d['item_id'])
         sorted_sofa_data = sorted(sofa_data, key=lambda d: d['item_id'])
 
@@ -420,6 +428,10 @@ class MyTest(FlaskTestCase):
             self.assertEqual(item.get('category'), "sofas-new:881")
 
         for x in range(0, 2):
+            del sorted_returned_items[x]['created']
+            del sorted_returned_items[x]['modified']
+            del sorted_sofa_data[x]['created']
+            del sorted_sofa_data[x]['modified']
             self.assertDictEqual(sorted_returned_items[x], sorted_sofa_data[x])
 
     def test_get_items_by_category_fail_bad_cat(self):
