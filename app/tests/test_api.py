@@ -400,6 +400,9 @@ class MyTest(FlaskTestCase):
                 test_data.append({"item_id": item_id, "data": data})
                 data["item_id"] = item_id
                 #str_date = data.get('created').strftime('%a, %d %b %Y %H:%M:%S ')
+                print("============================================")
+                print(data.get('created'))
+                print("============================================")
                 iso_fmt = data.get('created').isoformat()
                 del data['created']
                 data['created'] = iso_fmt
