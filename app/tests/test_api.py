@@ -428,7 +428,7 @@ class MyTest(FlaskTestCase):
             del sorted_returned_items[x]['created']
             del sorted_returned_items[x]['modified']
             del sorted_sofa_data[x]['created']
-            del sorted_sofa_data[x]['modified']
+            # del sorted_sofa_data[x]['modified']
             self.assertDictEqual(sorted_returned_items[x], sorted_sofa_data[x])
 
     def test_get_items_by_category_fail_bad_cat(self):
