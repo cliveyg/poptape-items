@@ -412,15 +412,6 @@ class MyTest(FlaskTestCase):
         self.assertEqual(response.status_code, 200)
         returned_data = response.json
         self.assertEqual(len(returned_data.get('items')), 3)
-        # print('=================================')
-        # print(returned_data)
-        # print('=================================')
-        # str_date = returned_data.get('created').strftime('%a, %d %b %Y %H:%M:%S ')
-        # del returned_data['created']
-        # returned_data['created'] = str_date
-        # str_date = returned_data.get('modified').strftime('%a, %d %b %Y %H:%M:%S ')
-        # del returned_data['modified']
-        # returned_data['modified'] = str_date
         sorted_returned_items = sorted(returned_data.get('items'), key=lambda d: d['item_id'])
         sorted_sofa_data = sorted(sofa_data, key=lambda d: d['item_id'])
 
@@ -428,6 +419,12 @@ class MyTest(FlaskTestCase):
             self.assertEqual(item.get('category'), "sofas-new:881")
 
         for x in range(0, 2):
+            # removing dates
+            if x == 0:
+                print('==================================')
+                print(sorted_returned_items[x]['created'])
+                print(sorted_sofa_data[x]['created'])
+                print('==================================')
             del sorted_returned_items[x]['created']
             del sorted_returned_items[x]['modified']
             del sorted_sofa_data[x]['created']
