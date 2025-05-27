@@ -412,6 +412,9 @@ class MyTest(FlaskTestCase):
         self.assertEqual(response.status_code, 200)
         returned_data = response.json
         self.assertEqual(len(returned_data.get('items')), 3)
+        print('=================================')
+        print(returned_data.get('created'))
+        print(returned_data.get('modified'))
         str_date = returned_data.get('created').strftime('%a, %d %b %Y %H:%M:%S ')
         del returned_data['created']
         returned_data['created'] = str_date
