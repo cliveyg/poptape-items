@@ -53,13 +53,15 @@ def is_valid_uuid(uuid_to_test, version=4):
 
 def create_item(**kwargs):
 
+    datein = datetime.datetime.utcnow()
+
     data = {'name': 'my test item 1',
             'description': 'blah lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
             'category': 'consoles-vintage:3341',
             'yarp': 'narp',
             'public_id': getPublicID(),
-            'created': datetime.datetime.utcnow(),
-            'modified': datetime.datetime.utcnow()}
+            'created': datein,
+            'modified': datein}
     # can override default options here
     for key, value in kwargs.items():
         data[key] = value
@@ -397,12 +399,13 @@ class MyTest(FlaskTestCase):
                 item_id, data = create_item(name="name " + str(x), category="sofas-new:881")
                 test_data.append({"item_id": item_id, "data": data})
                 data["item_id"] = item_id
-                str_date = data.get('created').strftime('%a, %d %b %Y %H:%M:%S ')
+                #str_date = data.get('created').strftime('%a, %d %b %Y %H:%M:%S ')
+                iso_fmt = data.get('created').isoformat()
                 del data['created']
-                data['created'] = str_date + "GMT"
-                str_date = data.get('modified').strftime('%a, %d %b %Y %H:%M:%S ')
+                data['created'] = iso_fmt
+                #str_date = data.get('modified').strftime('%a, %d %b %Y %H:%M:%S ')
                 del data['modified']
-                data['modified'] = str_date + "GMT"
+                data['modified'] = iso_fmt
                 sofa_data.append(data)
 
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
