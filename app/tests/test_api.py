@@ -416,6 +416,10 @@ class MyTest(FlaskTestCase):
         sorted_returned_items = sorted(returned_data.get('items'), key=lambda d: d['item_id'])
         sorted_sofa_data = sorted(sofa_data, key=lambda d: d['item_id'])
 
+        print("Sorted returned items: ", sorted_returned_items)
+
+        print("Sorted sofa data: ", sorted_sofa_data)
+
         for item in sorted_returned_items:
             self.assertEqual(item.get('category'), "sofas-new:881")
 
