@@ -8,7 +8,6 @@ from functools import wraps
 from .fixtures import getPublicID, getSpecificPublicID
 from flask import jsonify
 import datetime
-# import uuid
 
 # have to mock the require_access_level decorator here before it
 # gets attached to any classes or functions
