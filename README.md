@@ -18,7 +18,6 @@ None
 
 ### Tests:
 Tests can be run from app root (/path/to/authy) using: `pytest --cov-config=app/tests/.coveragerc --cov=app app/tests`
-Current test coverage is around 96%
 
 ### Docker:
 This app can now be run in Docker using the included docker-compose.yml and Dockerfile. The database and roles still need to be created manually after successful deployment of the app in Docker. It's on the TODO list to automate these parts :-)
