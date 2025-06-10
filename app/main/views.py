@@ -27,6 +27,8 @@ def only_json():
 @bp.route('/items', methods=['POST'])
 @require_access_level(10, request)
 def create_item(public_id, request):
+
+    app.logger.debug("In create_item")
    
     # TODO: items can have many fields - hence the choice of a nosql datastore
     # need to lock this down a bit more - at the mo we only insist on item_id
@@ -298,6 +300,7 @@ def delete_item(public_id, request, item_id):
 
 @bp.route('/items/status', methods=['GET'])
 def system_running():
+    app.logger.debug("Logging is working...")
     return jsonify({'message': 'System running...'}), 200
 
 # --------------------------------------------------------------------------- #
