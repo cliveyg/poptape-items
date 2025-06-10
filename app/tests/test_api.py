@@ -324,7 +324,7 @@ class MyTest(FlaskTestCase):
         response = self.client.post('/items', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 400)
         returned_data = response.json
-        self.assertEqual(returned_data.get('error'), "'my te' is too short")
+        self.assertEqual(returned_data.get('error'), "'myte' is too short")
 
     def test_create_item_fail_category_too_short(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
