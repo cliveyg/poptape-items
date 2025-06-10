@@ -126,7 +126,7 @@ class MyTest(FlaskTestCase):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         create_json = {'name': 'my test item',
                        'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-                       'category': 'computers-vintage'}
+                       'category': 'computers-vintage:89898'}
 
         response = self.client.post('/items', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 201)
@@ -137,7 +137,7 @@ class MyTest(FlaskTestCase):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         create_json = {'name': 'my test item',
                        'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-                       'category': 'computers-vintage',
+                       'category': 'computers-vintage:90003',
                        'yarp': 'narp'}
 
         response = self.client.post('/items', json=create_json, headers=headers)
@@ -167,8 +167,8 @@ class MyTest(FlaskTestCase):
 
     def test_bulk_fetch_items_ok(self):
 
-        item1_id, data1 = create_item(name="name 1", category="cars-new")
-        item2_id, data2 = create_item(name="name 2", category="bikes")
+        item1_id, data1 = create_item(name="name 1", category="cars-new:90003")
+        item2_id, data2 = create_item(name="name 2", category="bikes:90007")
 
         create_json = {'item_ids': [item1_id, item2_id]}
         headers = {'Content-type': 'application/json'}
@@ -190,8 +190,8 @@ class MyTest(FlaskTestCase):
 
     def test_bulk_fetch_item_ok_other_404(self):
 
-        item1_id, data1 = create_item(name="name 3", category="cars-new")
-        item2_id, data2 = create_item(name="name 4", category="bikes")
+        item1_id, data1 = create_item(name="name 3", category="cars-new:90003")
+        item2_id, data2 = create_item(name="name 4", category="bikes:90007")
 
         create_json = {'item_ids': [item1_id, str(uuid.uuid4())]}
         headers = {'Content-type': 'application/json'}
@@ -317,9 +317,9 @@ class MyTest(FlaskTestCase):
 
     def test_create_item_fail_name_too_short(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
-        create_json = {'name': 'my te',
+        create_json = {'name': 'myte',
                        'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-                       'category': 'computers-new'}
+                       'category': 'computers-new:4002'}
 
         response = self.client.post('/items', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 400)
@@ -341,7 +341,7 @@ class MyTest(FlaskTestCase):
         headers = {'Content-type': 'application/json'}
         create_json = {'name': 'my test item',
                        'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-                       'category': 'computers-vintage'}
+                       'category': 'computers-vintage:9900'}
 
         response = self.client.post('/items', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 401)
@@ -349,7 +349,7 @@ class MyTest(FlaskTestCase):
     def test_create_item_fail_no_name(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         create_json = {'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-                       'category': 'computers-vintage'}
+                       'category': 'computers-vintage:8880'}
 
         response = self.client.post('/items', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 400)
@@ -359,7 +359,7 @@ class MyTest(FlaskTestCase):
     def test_create_item_fail_no_description(self):
         headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
         create_json = {'name': 'blah blah blah',
-                       'category': 'computers-vintage'}
+                       'category': 'computers-vintage:98893'}
 
         response = self.client.post('/items', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 400)
