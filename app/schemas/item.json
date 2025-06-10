@@ -3,9 +3,18 @@
   "title": "Item schema",
   "type": "object",
   "properties": {
-        "description": {"type": "string", "maxLength": 5000},
-        "name": {"type": "string", "minLength": 10, "maxLength": 200},
-        "category": {"type": "string", "minLength": 5, "maxLength": 100}
+        "description": {"type": "string",
+                        "maxLength": 5000
+        },
+        "name": {"type": "string",
+                 "minLength": 5,
+                 "maxLength": 200
+        },
+        "category": {"type": "string",
+                     "minLength": 5,
+                     "maxLength": 100,
+                     "pattern": "^[a-z-]+:[0-9]+$"
+        }
   },
   "additionalProperties": true,
   "required": ["description", "name", "category"]
