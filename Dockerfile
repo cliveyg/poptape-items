@@ -1,13 +1,5 @@
 FROM python:3.12-slim
 
-# add bash etc as alpine version doesn't have these
-#RUN apk add --no-cache bash git gawk sed grep bc coreutils
-
-# this modules enable use to build bcrypt
-#RUN apk --no-cache add --virtual build-dependencies gcc g++ make libffi-dev
-#RUN pip install bcrypt==2.0.0
-#RUN apk add --no-cache redis
-
 # this needs to match the directory/package name of the python app
 COPY . /items
 WORKDIR /items
