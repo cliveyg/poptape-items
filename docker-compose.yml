@@ -25,7 +25,7 @@ services:
       - "1243:27017"
     restart: always
     volumes:
-      - poptape_items:/data/db
+      - poptape_items_data:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
@@ -36,6 +36,6 @@ networks:
   poptape:
     external: true
 volumes:
-  poptape_items:
-    name: poptape_items
+  poptape_items_data:
+    name: poptape_items_data
 

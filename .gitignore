@@ -9,6 +9,8 @@
 /app/.env
 /*.pyc
 /app/*.pyc
+*/.DS_Store
+.DS_Store
 .coverage
 # Un-ignore these files - it's bit of a clonky way to do it but it's more secure
 !Dockerfile
