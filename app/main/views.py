@@ -11,6 +11,7 @@ from pymongo import ASCENDING
 import uuid
 import datetime
 import re
+import os
 
 # --------------------------------------------------------------------------- #
 
@@ -301,7 +302,7 @@ def delete_item(public_id, request, item_id):
 @bp.route('/items/status', methods=['GET'])
 def system_running():
     app.logger.debug("Logging is working...")
-    return jsonify({'message': 'System running...'}), 200
+    return jsonify({'message': 'System running...', 'version': os.getenv('VERSION')}), 200
 
 # --------------------------------------------------------------------------- #
 # debug and helper functions

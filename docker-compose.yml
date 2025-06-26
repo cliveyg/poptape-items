@@ -3,9 +3,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: poptape/items/api:v0.2
+    environment:
+      - "PORT=${PORT}"
+    image: poptape/items/api:v${VERSION}
     ports:
-      - "1242:8003"
+      - "1242:${PORT}"
     restart: always
     depends_on:
       - mongodb

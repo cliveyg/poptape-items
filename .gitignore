@@ -37,3 +37,4 @@
 !app/tests/fixtures.py
 !app/.env_example
 !.gitignore
+!run_app.sh
