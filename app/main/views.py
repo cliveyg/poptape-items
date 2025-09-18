@@ -65,7 +65,7 @@ def create_item(public_id, request):
     r = get_s3_urls(foto_ids, token)
     s3_urls = []
     collection_name = 'z'+public_id.replace('-', '')
-    bucket_url = "https://"+collection_name.lower()+".s3.amazonaws.com/"
+    bucket_url = "https://"+collection_name.lower()+".s3.amazonaws.com"
 
     if r.status_code == 201:
         aws_data = r.json()
@@ -324,6 +324,13 @@ def _return_document(item_id):
     del record['_id']
     item_details = record.get("details")
     item_details['item_id'] = item_id
+    x = item_details['created']
+    del item_details['created']
+    item_details['created'] = x.strftime('%Y-%m-%dT%H:%M:%S.%f%Z')
+    y = item_details['modified']
+    del item_details['modified']
+    item_details['modified'] = y.strftime('%Y-%m-%dT%H:%M:%S.%f%Z')
+
     return item_details
 
 # --------------------------------------------------------------------------- #

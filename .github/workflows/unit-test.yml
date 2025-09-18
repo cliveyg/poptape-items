@@ -38,6 +38,9 @@ jobs:
           --health-retries 5
     steps:
 
+      - name: Print /etc/hosts
+        run: cat /etc/hosts
+
       - name: Install mongosh
         run: |
           sudo apt-get update
