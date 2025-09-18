@@ -41,16 +41,6 @@ jobs:
       - name: Print /etc/hosts
         run: cat /etc/hosts
 
-      - name: Try ping mongodb
-        run: |
-          for i in {1..10}; do
-            ping -c 1 mongodb && echo "PING SUCCESS" && exit 0
-            echo "Waiting for MongoDB DNS..."
-            sleep 2
-          done
-          echo "Failed to resolve/ping mongodb"
-          exit 1
-
       - name: Install mongosh
         run: |
           sudo apt-get update
@@ -73,6 +63,16 @@ jobs:
       - name: Create .env file from github secrets
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
+
+      - name: Try ping mongodb
+        run: |
+          for i in {1..10}; do
+            ping -c 1 mongodb && echo "PING SUCCESS" && exit 0
+            echo "Waiting for MongoDB DNS..."
+            sleep 2
+          done
+          echo "Failed to resolve/ping mongodb"
+          exit 1
 
       - name: Test with pytest
         run: |
