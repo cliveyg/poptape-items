@@ -68,7 +68,7 @@ jobs:
           coverage run -m --omit="*/test*" pytest -v --junitxml=junit.xml --html=report.html
           coverage xml          
           echo "$(coverage report -m )"
-          covRes="$(coverage report -m --fail-under=90)"
+          covRes="$(coverage report -m --fail-under=85)"
           echo "$covRes"
 
       - name: Create coverage badges

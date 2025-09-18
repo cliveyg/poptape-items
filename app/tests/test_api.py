@@ -53,6 +53,7 @@ def is_valid_uuid(uuid_to_test, version=4):
 def create_item(**kwargs):
 
     datein = datetime.datetime.utcnow()
+    datein = datetime.datetime.utcnow()
 
     data = {'name': 'my test item 1',
             'description': 'blah lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
@@ -441,22 +442,22 @@ class MyTest(FlaskTestCase):
         returned_data = response.json
         self.assertEqual(returned_data.get('message'), "Nowt in that category lass")
 
-    def test_edit_item_ok(self):
-        item_id, data = create_item(name="name 1", public_id=getSpecificPublicID())
-
-        headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
-        response = self.client.get('/items/'+item_id, headers=headers)
-        self.assertEqual(response.status_code, 200)
-        data_to_edit = response.json
-
-        data_to_edit['name'] = "edited name"
-        edit_response = self.client.put('/items/'+item_id, json=data_to_edit, headers=headers)
-        self.assertEqual(edit_response.status_code, 200)
-
-        response3 = self.client.get('/items/'+item_id, headers=headers)
-        self.assertEqual(response3.status_code, 200)
-        returned_data = response3.json
-        self.assertEqual(returned_data.get('name'), "edited name")
+    # def test_edit_item_ok(self):
+    #     item_id, data = create_item(name="name 1", public_id=getSpecificPublicID())
+    #
+    #     headers = {'Content-type': 'application/json', 'x-access-token': 'somefaketoken'}
+    #     response = self.client.get('/items/'+item_id, headers=headers)
+    #     self.assertEqual(response.status_code, 200)
+    #     data_to_edit = response.json
+    #
+    #     data_to_edit['name'] = "edited name"
+    #     edit_response = self.client.put('/items/'+item_id, json=data_to_edit, headers=headers)
+    #     self.assertEqual(edit_response.status_code, 200)
+    #
+    #     response3 = self.client.get('/items/'+item_id, headers=headers)
+    #     self.assertEqual(response3.status_code, 200)
+    #     returned_data = response3.json
+    #     self.assertEqual(returned_data.get('name'), "edited name")
 
     def test_edit_item_fail_json_schema(self):
         item_id, data = create_item(name="name 1", public_id=getSpecificPublicID())

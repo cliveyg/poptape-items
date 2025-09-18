@@ -19,6 +19,7 @@ def get_s3_urls(foto_ids, token):
     #app.logger.info("S3 URL [%s]", app.config['AWS_S3_URL'])
     #app.logger.info(json.dumps({'objects': foto_ids}))
 
+    #r = requests
     try:
         r = requests.post(url, data=json.dumps({'objects': foto_ids}), headers=headers)
     except Exception as err:
