@@ -6,4 +6,7 @@ app = create_app()
 #
 @app.shell_context_processor
 def make_shell_context():
-    return dict(app=app, mongo=mongo, limiter=limiter, flask_uuid=flask_uuid)
+    return dict(app=app,
+                mongo=mongo,
+                limiter=limiter,
+                flask_uuid=flask_uuid)

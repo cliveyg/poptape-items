@@ -1,5 +1,5 @@
 # app/main/views.py
-from app import mongo, limiter, flask_uuid
+from app import mongo  # , limiter, flask_uuid  # , typesense
 from flask import jsonify, request, abort
 from flask import current_app as app
 from app.main import bp
@@ -12,6 +12,7 @@ import uuid
 import datetime
 import re
 import os
+import typesense
 
 # --------------------------------------------------------------------------- #
 
@@ -71,8 +72,37 @@ def create_item(public_id, request):
         aws_data = r.json()
         s3_urls = aws_data.get('aws_urls')
 
+    # add item details to search
+    collection_name = app.config.get("TYPESENSE_COLLECTION")
+    search_doc_created = False
+    try:
+        search_data = {}
+        data['_id'] = item_id
+        data['item_id'] = item_id
+        for key, val in data.items():
+            if isinstance(val, datetime.datetime):
+                search_data[key] = val.timestamp()
+            else:
+                search_data[key] = val
+
+        client = typesense.Client({
+            'nodes': [{
+                'host': app.config.get("TYPESENSE_HOST"),
+                'port': app.config.get("TYPESENSE_PORT"),
+                'protocol': app.config.get("TYPESENSE_PROTOCOL"),
+            }],
+            'api_key': app.config.get("TYPESENSE_ITEMS_CRUD_APIKEY"),
+            'connection_timeout_seconds': 2
+        })
+        result = client.collections[collection_name].documents.upsert(search_data)
+        search_doc_created = True
+        app.logger.debug("Result from typesense upsert is [%s]", result)
+    except Exception as e:
+        app.logger.error("Typesense error [%s]", str(e))
+
     return jsonify({'item_id': item_id,
                     'bucket_url': bucket_url,
+                    'search_doc_created': search_doc_created,
                     's3_urls': s3_urls}), 201
 
 # --------------------------------------------------------------------------- #
