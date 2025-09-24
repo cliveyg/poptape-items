@@ -33,6 +33,7 @@ python-dateutil
 python-dotenv
 requests
 six
+typesense
 urllib3
 uuid
 wcwidth

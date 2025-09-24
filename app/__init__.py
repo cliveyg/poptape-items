@@ -37,6 +37,8 @@ def create_app(config_class=Config):
     flask_uuid.init_app(app)
     # mongo.init_app(app, uri=app.config['MONGO_URI'])
     mongo.init_app(app)
+    # typesense.init_app(app)
+    # app.typesense = typesense
 
     # blueprints
     from app.main import bp as main_bp

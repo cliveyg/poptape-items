@@ -16,9 +16,15 @@ class Config(object):
     FOTO_LIMIT = os.getenv('FOTO_LIMIT')
     AWS_S3_URL = os.getenv('AWS_S3_URL')
     FOTOS_URL = os.getenv('FOTOS_URL')
+    TYPESENSE_HOST = os.getenv("TYPESENSE_HOST")
+    TYPESENSE_PORT = os.getenv("TYPESENSE_PORT")
+    TYPESENSE_PROTOCOL = os.getenv("TYPESENSE_PROTOCOL")
+    TYPESENSE_ITEMS_CRUD_APIKEY = os.getenv("TYPESENSE_ITEMS_CRUD_APIKEY")
+    TYPESENSE_COLLECTION = os.getenv("TYPESENSE_COLLECTION")
 
 class TestConfig(Config):
     LOG_LEVEL = "DEBUG"
     TESTING = True
     MONGO_URI = os.getenv('MONGO_TEST_URI')
+    TYPESENSE_COLLECTION = "test"
     DEBUG = True
