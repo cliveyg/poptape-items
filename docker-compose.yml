@@ -28,6 +28,7 @@ services:
     restart: always
     volumes:
       - poptape_items_data:/data/db
+      - /tmp/ignoreme:/data/configdb # this prevents docker creating odd 0 byte volumes
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
